@@ -105,3 +105,5 @@ getgenv().Key = "MARU-ZPSH-UBRVL-G88C-II6WK-7Z1E"
 getgenv().id = "969581952531316827"
 getgenv().Script_Mode = "Kaitun_Script"
 loadstring(game:HttpGet("https://raw.githubusercontent.com/xshiba/MaruBitkub/main/Mobile.lua"))()
+
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xQuartyx/QuartyzScript/main/Blox%20Fruits/Extenstion/AuraQueue.lua"))()
