@@ -68,7 +68,7 @@ _G.FarmMastery_Settings = {
     ['Sword'] = true,
     ['DevilFruits'] = true,
     ['Select_Swords'] = {
-        ["AutoSettings"] = true, -- ถ้าเปิดอันนี้มันจะเลือกดาบให้เองหรือฟาร์มทุกดาบนั่นเอง
+        ["AutoSettings"] = false, -- ถ้าเปิดอันนี้มันจะเลือกดาบให้เองหรือฟาร์มทุกดาบนั่นเอง
         ["ManualSettings"] = { -- ถ้าปรับ AutoSettings เป็น false มันจะฟาร์มดาบที่เลือกตรงนี้ ตัวอย่างข้างล่าง
             "Saber",
             "CursedDualKatana",            
@@ -94,7 +94,7 @@ _G.SwordSettings = { -- ดาบที่จะทำ
 }
 _G.SharkAnchor_Settings = {
     ["Enabled_Farm"] = true,
-    ['FarmAfterMoney'] = 2500000
+    ['FarmAfterMoney'] = 250000
 }
 _G.GunSettings = { -- ปืนที่จะทำ
     ['Kabucha'] = true,
