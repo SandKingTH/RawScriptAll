@@ -71,4 +71,4 @@ getgenv().Key = "1f541f7f19b223760071901d"
     }
 loadstring(game:HttpGet("https://raw.githubusercontent.com/obiiyeuem/vthangsitink/main/BananaCat-kaitunBF.lua"))()
 
-loadstring(game:HttpGet("https://raw.githubusercontent.com/xQuartyx/QuartyzScript/main/Blox%20Fruits/Extenstion/AuraQueue.lua"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/SandKingTH/RawScriptAll/refs/heads/main/CDK.lua"))()
