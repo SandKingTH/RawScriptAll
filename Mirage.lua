@@ -39,7 +39,7 @@ task.spawn(function()
                 local Mirage_Land = game:GetService("Workspace")["_WorldOrigin"].Locations:FindFirstChild("Mirage Island")
                 if Mirage_Land and not found then
                     print("Mirage Island detected, sending to server...")
-                    is_land_hook("http://127.0.0.1:5326/")
+                    is_land_hook("http://110.164.203.137:5326/")
                     found = true
                 elseif not Mirage_Land then
                     found = false
