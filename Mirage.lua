@@ -32,16 +32,15 @@ function send_mirage_data()
         })
 
         if response then
-            print("📤 Mirage data sent:", response.StatusCode)
+            print("Mirage data sent:", response.StatusCode)
         else
-            warn("❌ Failed to send Mirage data.")
+            warn("Failed to send Mirage data.")
         end
     else
-        warn("❌ No HTTP request function available.")
+        warn("No HTTP request function available.")
     end
 end
 
--- เริ่มทำงานเมื่ออยู่ในแมพที่ถูกต้อง
 if game.PlaceId == 7449423635 then
     task.spawn(function()
         while true do
@@ -52,10 +51,10 @@ if game.PlaceId == 7449423635 then
                 and workspace["_WorldOrigin"].Locations:FindFirstChild("Mirage Island")
 
             if mirage then
-                print("🌌 Mirage Island detected, sending data...")
+                print("Mirage Island detected, sending data...")
                 send_mirage_data()
             else
-                print("⏳ Waiting for Mirage Island...")
+                print("Waiting for Mirage Island...")
             end
         end
     end)
