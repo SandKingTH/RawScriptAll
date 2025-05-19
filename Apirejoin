@@ -1,4 +1,3 @@
-setfpscap(10)
 repeat task.wait(1) until game:IsLoaded()
 repeat task.wait() until game:GetService("Players").LocalPlayer:FindFirstChild("PlayerGui")
 
