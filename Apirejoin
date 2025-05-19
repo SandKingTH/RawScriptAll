@@ -1,0 +1,90 @@
+setfpscap(10)
+repeat task.wait(1) until game:IsLoaded()
+repeat task.wait() until game:GetService("Players").LocalPlayer:FindFirstChild("PlayerGui")
+
+local HttpService = game:GetService("HttpService")
+local Request = (syn and syn.request) or request or (http and http.request) or http_request
+local username = game.Players.LocalPlayer.Name
+local globalFunc = false
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer:FindFirstChild("PlayerGui")
+local PlaceId = game.PlaceId
+game.StarterGui:SetCore("SendNotification", {
+    Title = 'API SERVICES',
+    Text = 'User : ' .. username,
+    Duration = 25,
+    Icon = 'rbxassetid://18976336309'
+})
+
+local function hasPirateButton()
+    local mainGui = PlayerGui and PlayerGui:FindFirstChild("Main (minimal)")
+    local chooseTeam = mainGui and mainGui:FindFirstChild("ChooseTeam")
+    local container = chooseTeam and chooseTeam:FindFirstChild("Container")
+    local pirates = container and container:FindFirstChild("Pirates")
+    return pirates ~= nil
+end
+
+local function checkForError()
+    game.CoreGui.RobloxPromptGui.promptOverlay.ChildAdded:Connect(function(v)
+        if v.Name == "ErrorPrompt" then
+            pcall(function()
+                repeat task.wait(0.5) until game.CoreGui.RobloxPromptGui.promptOverlay.ErrorPrompt.MessageArea.ErrorFrame:FindFirstChild("ErrorMessage")
+                
+                local errorMessage = game.CoreGui.RobloxPromptGui.promptOverlay.ErrorPrompt.MessageArea.ErrorFrame.ErrorMessage.Text
+                local errorCode = tonumber(errorMessage:split("\n")[2]:match("%d+"))
+
+                if errorCode ~= 772 and errorCode ~= 773 then
+                    globalFunc = true
+                end
+            end)
+        end
+    end)
+    return globalFunc
+end
+
+local function updateStatus()
+    local url = "http://127.0.0.1:14781/"
+    local data = "username=" .. username
+
+    if not Request then
+        warn("HTTP request function not available")
+        return
+    end
+
+    local requestData = {
+        Url = url,
+        Method = "POST",
+        Headers = {
+            ["Content-Type"] = "application/x-www-form-urlencoded"
+        },
+        Body = data
+    }
+
+    local success, response = pcall(function()
+        return Request(requestData)
+    end)
+
+    if success and response.StatusCode == 200 then
+        print("Status Updated API : " .. username)
+    else
+        warn("Failed Update API " .. (response and response.StatusCode or "Request failed"))
+    end
+end
+
+local Round = 0
+while true do
+    globalFunc = checkForError()
+    print("Disconnected : ", globalFunc)
+    print("API runs at : ", Round)
+    if not globalFunc then
+        if PlaceId == 2753915549 or PlaceId == 4442272183 or PlaceId == 7449423635 then
+            if hasPirateButton() == false then
+                updateStatus()
+            end
+        end
+    end
+    Round = Round + 1
+    print("----------------------------------------")
+    wait(15)
+end
