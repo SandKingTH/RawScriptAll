@@ -213,6 +213,26 @@ function Getmany()
     end
 end
 
+function Getmanyall()
+    local getmany = true
+    while getmany do
+        local oldmany = DataCore.money.hand
+        local oldition = Vector3.new(132.82102966308594, 255.47634887695312, 492.4247131347656)
+        walkTo(oldition)
+        local targetPosition = Vector3.new(113.7680892944336, 255.1897430419922, 463.8665771484375)
+        walkTo(targetPosition)
+        pcall(function()
+            return Get("transfer_funds", "bank", "hand", DataCore.money.bank)
+        end)
+        walkTo(oldition)
+        wait(2)
+        local newmany = DataCore.money.hand
+        if newmany > oldmany then
+            getmany = false
+        end
+    end
+end
+
 function postmany()
     local getmany = true
     while getmany do
@@ -248,6 +268,8 @@ function main()
             Downhole()
         elseif input.KeyCode == Enum.KeyCode.Five then
             postmany()
+        elseif input.KeyCode == Enum.KeyCode.Six then
+            Getmanyall()
         end
     end)
 end
