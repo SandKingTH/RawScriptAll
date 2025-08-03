@@ -192,8 +192,6 @@ end
 
 function Getmany()
     local getmany = true
-    local manyhand = DataCore.money.hand
-    local rewrod = 118500-manyhand
 
     while getmany do
         local oldmany = DataCore.money.hand
@@ -202,7 +200,11 @@ function Getmany()
         local targetPosition = Vector3.new(113.7680892944336, 255.1897430419922, 463.8665771484375)
         walkTo(targetPosition)
         pcall(function()
-            return Get("transfer_funds", "bank", "hand", rewrod)
+            return Get("transfer_funds", "hand", "bank", DataCore.money.hand)
+        end)
+        wait(1.5)
+        pcall(function()
+            return Get("transfer_funds", "bank", "hand", 118500)
         end)
         walkTo(oldition)
         wait(2)
