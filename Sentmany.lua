@@ -260,7 +260,6 @@ function main()
     UserInputService.InputBegan:Connect(function(input, gameProcessed)
         if gameProcessed then return end
         if input.KeyCode == Enum.KeyCode.Two then
-            
             local targetPosition = Vector3.new(120.244728, 255.189713, 467.631744, -0.989011526, 4.388205e-08, 0.147838503, 5.31572475e-08, 1, 5.87876556e-08, -0.147838503, 6.60003536e-08, -0.989011526)
             walkToTarget(targetPosition)
 		    local newPosition = Vector3.new(132.82102966308594, 255.47634887695312, 492.4247131347656)
