@@ -1,8 +1,27 @@
 
 repeat task.wait() until game:IsLoaded()
 repeat task.wait() until game:GetService("Players").LocalPlayer:FindFirstChild("PlayerGui")
-wait(5)
+wait(3)
 
+local SplashModule = require(game.ReplicatedStorage.Modules.Game.SplashScreen)
+if SplashModule.in_loading_screen.get() then
+    Workspace:SetAttribute("SkipCreator", true)
+    set_thread_identity(2)
+    SplashModule.in_loading_screen.set(false) 
+    set_thread_identity(8)
+    local splashGui = game.Players.LocalPlayer:WaitForChild("PlayerGui"):FindFirstChild("SplashScreenGui")
+    splashGui:Destroy()
+    local SoundService = game:GetService("SoundService")
+    for _, s in ipairs(SoundService:GetChildren()) do
+        if s:IsA("Sound") and s.SoundId == "rbxassetid://113169105768074" then
+            local tween = game:GetService("TweenService"):Create(s, TweenInfo.new(1), {Volume = 0})
+            tween:Play()
+            tween.Completed:Wait()
+            s:Stop()
+        end
+    end
+    wait(3)
+end
 
 local plr = game.Players.LocalPlayer
 local Char = plr.Character or plr.CharacterAdded:Wait()
@@ -255,6 +274,17 @@ function postmany()
     end
 end
 
+function Shutdown()
+    local Net_upvr = require(game.ReplicatedStorage.Modules.Core.Net)
+    local validity_check = getupvalue(Net_upvr.send, 2)
+    if getinfo(validity_check).name == "validity_check" then
+        setconstant(validity_check, 3, "getgenv789")
+    end
+    Net_upvr.send("request_respawn")
+    wait(1)
+    game:Shutdown()
+end
+
 function main()
     local UserInputService = game:GetService("UserInputService")
     UserInputService.InputBegan:Connect(function(input, gameProcessed)
@@ -277,10 +307,39 @@ function main()
             postmany()
         elseif input.KeyCode == Enum.KeyCode.Six then
             Getmanyall()
+        elseif input.KeyCode == Enum.KeyCode.Seven then
+            Shutdown()
         end
     end)
 end
 
+-- local Net_upvr = require(game.ReplicatedStorage.Modules.Core.Net)
+-- local validity_check = getupvalue(Net_upvr.send, 2)
+-- if getinfo(validity_check).name == "validity_check" then
+--     setconstant(validity_check, 3, "getgenv789")
+-- end
+-- Net_upvr.send("request_respawn")
+-- wait(8)
+-- local NetCore = require(game:GetService("ReplicatedStorage").Modules.Core.Net)
+-- local Authenticate = debug.getupvalue(NetCore.get, 1)
+-- local Send = function(...)
+-- 	Authenticate.event += 1;
+-- 	game:GetService("ReplicatedStorage").Remotes.Send:FireServer(Authenticate.event, ...)
+
+-- end
+-- Send("death_screen_request_respawn")
+-- wait(2)
+-- for i, v in pairs(game:GetDescendants()) do
+--     if v.Name == 'DoorSystem' then
+--         v:Destroy()
+--     end
+-- end
+
+-- local targetPosition = Vector3.new(120.244728, 255.189713, 467.631744, -0.989011526, 4.388205e-08, 0.147838503, 5.31572475e-08, 1, 5.87876556e-08, -0.147838503, 6.60003536e-08, -0.989011526)
+-- walkToTarget(targetPosition)
+-- local newPosition = Vector3.new(132.82102966308594, 255.47634887695312, 492.4247131347656)
+-- walkTo(newPosition)
 main()
+
 
 -- setclipboard(game.JobId)
