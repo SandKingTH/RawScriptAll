@@ -98,230 +98,260 @@ function RunScript(SC)
         while true do
             task.wait(5)
             setfpscap(10)
-            if game:GetService("Stats"):GetTotalMemoryUsageMb() >= 3000 then
-                game:Shutdown()
-            end
+            -- if game:GetService("Stats"):GetTotalMemoryUsageMb() >= 3000 then
+            --     game:Shutdown()
+            -- end
         end
     elseif SC == "maru" then
-        repeat task.wait() until game:IsLoaded()
-        repeat task.wait() until game.Players
-        repeat task.wait() until game.Players.LocalPlayer
-        repeat task.wait() until game.Players.LocalPlayer:FindFirstChild("PlayerGui")
-        _G.Team = "Pirate" -- Marine / Pirate
-        getgenv().Script_Mode = "Kaitun_Script"
-        _G.MainSettings = {
-            ["EnabledHOP"] = true,
-            ['FPSBOOST'] = true,
-            ["FPSLOCKAMOUNT"] = 60,
-            ['WhiteScreen'] = true,
-            ['CloseUI'] = false,
-            ["NotifycationExPRemove"] = true,
-            ['AFKCheck'] = 150,
-            ["LockFragments"] = 20000,
-            ["LockFruitsRaid"] = {
-                    [1] = "Yeti-Yeti",
-                    [2] = "Dragon-Dragon",
-                    [3] = "Dough-Dough",
-                    [4] = "Kitsune-Kitsune",
-                    [5] = "Leopard-Leopard",
-                    [6] = "Venom-Venom",
-                    [7] = "Spirit-Spirit",
-                    [8] = "Mammoth-Mammoth",
-                    [9] = "Gas-Gas",
-                    [10] = "Lightning-Lightning",
-                    [11] = "T-Rex-T-Rex",
-            }
-        }
-        _G.SharkAnchor_Settings = {
-            ["Enabled_Farm"] = true,
-            ['FarmAfterMoney'] = 2500000
-        }
-        _G.Quests_Settings = {
-            ['Rainbow_Haki'] = true,
-            ["MusketeerHat"] = true,
-            ["PullLever"] = true,
-            ['DoughQuests_Mirror'] = {
-                ['Enabled'] = true,
-                ['UseFruits'] = true
-            }
-        }
-        _G.Races_Settings = {
-            ['Race'] = {
-                ['EnabledEvo'] = true,
-                ["v2"] = true,
-                ["v3"] = true,
-                ["Races_Lock"] = {
-                    ["Races"] = {
-                        ["Mink"] = true,
-                        ["Human"] = true,
-                        ["Fishman"] = true
-                    },
-                    ["RerollsWhenFragments"] = 20000
+        task.spawn(function()
+            repeat task.wait() until game:IsLoaded()
+            repeat task.wait() until game.Players
+            repeat task.wait() until game.Players.LocalPlayer
+            repeat task.wait() until game.Players.LocalPlayer:FindFirstChild("PlayerGui")
+            _G.Team = "Pirate" -- Marine / Pirate
+            getgenv().Script_Mode = "Kaitun_Script"
+            _G.MainSettings = {
+                ["EnabledHOP"] = true,
+                ['FPSBOOST'] = true,
+                ["FPSLOCKAMOUNT"] = 60,
+                ['WhiteScreen'] = true,
+                ['CloseUI'] = false,
+                ["NotifycationExPRemove"] = true,
+                ['AFKCheck'] = 150,
+                ["LockFragments"] = 20000,
+                ["LockFruitsRaid"] = {
+                        [1] = "Yeti-Yeti",
+                        [2] = "Dragon-Dragon",
+                        [3] = "Dough-Dough",
+                        [4] = "Kitsune-Kitsune",
+                        [5] = "Leopard-Leopard",
+                        [6] = "Venom-Venom",
+                        [7] = "Spirit-Spirit",
+                        [8] = "Mammoth-Mammoth",
+                        [9] = "Gas-Gas",
+                        [10] = "Lightning-Lightning",
+                        [11] = "T-Rex-T-Rex",
                 }
             }
-        }
-        _G.Fruits_Settings = {
-            ['Main_Fruits'] = {},
-            ['Select_Fruits'] = {"Ice-Ice", "Light-Light", "Dark-Dark","Rumble-Rumble","Magma-Magma",}
-        }
-        _G.Settings_Melee = {
-            ['Superhuman'] = true,
-            ['DeathStep'] = true,
-            ['SharkmanKarate'] = true,
-            ['ElectricClaw'] = true,
-            ['DragonTalon'] = true,
-            ['Godhuman'] = true
-        }
-        _G.SwordSettings = {
-            ['Saber'] = true,
-            ["Pole"] = false,
-            ['MidnightBlade'] = false,
-            ['Shisui'] = true,
-            ['Saddi'] = true,
-            ['Wando'] = true,
-            ['Yama'] = true,
-            ['Rengoku'] = false,
-            ['Canvander'] = false,
-            ['BuddySword'] = false,
-            ['TwinHooks'] = false,
-            ['HallowScryte'] = false,
-            ['TrueTripleKatana'] = true,
-            ['CursedDualKatana'] = true
-        }
-        _G.GunSettings = {
-            ['Kabucha'] = false,
-            ['SerpentBow'] = false,
-            ['SoulGuitar'] = false
-        }
-        _G.FarmMastery_Settings = {
-            ['Melee'] = false,
-            ['Sword'] = false,
-            ['DevilFruits'] = true,
-            ['Select_Swords'] = {
-                ["AutoSettings"] = true,
-                ["ManualSettings"] = {
-                    "Saber",
-                    "Buddy Sword"
+            _G.SharkAnchor_Settings = {
+                ["Enabled_Farm"] = true,
+                ['FarmAfterMoney'] = 2500000
+            }
+            _G.Quests_Settings = {
+                ['Rainbow_Haki'] = true,
+                ["MusketeerHat"] = true,
+                ["PullLever"] = true,
+                ['DoughQuests_Mirror'] = {
+                    ['Enabled'] = true,
+                    ['UseFruits'] = true
                 }
             }
-        }
-        _G.Hop_Settings = {
-            ["Find Tushita"] = false
-        }
-        getgenv().Key = "MARU-K13E1-9UIP-45J9-AJQ0Q-KVOK2"
-        getgenv().id = "969581952531316827"
-        getgenv().Script_Mode = "Kaitun_Script"
-        loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/e1c3fb1e210e932600653f256d136b6e.lua"))()  
+            _G.Races_Settings = {
+                ['Race'] = {
+                    ['EnabledEvo'] = true,
+                    ["v2"] = true,
+                    ["v3"] = true,
+                    ["Races_Lock"] = {
+                        ["Races"] = {
+                            ["Mink"] = true,
+                            ["Human"] = true,
+                            ["Fishman"] = true
+                        },
+                        ["RerollsWhenFragments"] = 20000
+                    }
+                }
+            }
+            _G.Fruits_Settings = {
+                ['Main_Fruits'] = {},
+                ['Select_Fruits'] = {"Ice-Ice", "Light-Light", "Dark-Dark","Rumble-Rumble","Magma-Magma",}
+            }
+            _G.Settings_Melee = {
+                ['Superhuman'] = true,
+                ['DeathStep'] = true,
+                ['SharkmanKarate'] = true,
+                ['ElectricClaw'] = true,
+                ['DragonTalon'] = true,
+                ['Godhuman'] = true
+            }
+            _G.SwordSettings = {
+                ['Saber'] = true,
+                ["Pole"] = false,
+                ['MidnightBlade'] = false,
+                ['Shisui'] = true,
+                ['Saddi'] = true,
+                ['Wando'] = true,
+                ['Yama'] = true,
+                ['Rengoku'] = false,
+                ['Canvander'] = false,
+                ['BuddySword'] = false,
+                ['TwinHooks'] = false,
+                ['HallowScryte'] = false,
+                ['TrueTripleKatana'] = true,
+                ['CursedDualKatana'] = true
+            }
+            _G.GunSettings = {
+                ['Kabucha'] = false,
+                ['SerpentBow'] = false,
+                ['SoulGuitar'] = false
+            }
+            _G.FarmMastery_Settings = {
+                ['Melee'] = false,
+                ['Sword'] = false,
+                ['DevilFruits'] = true,
+                ['Select_Swords'] = {
+                    ["AutoSettings"] = true,
+                    ["ManualSettings"] = {
+                        "Saber",
+                        "Buddy Sword"
+                    }
+                }
+            }
+            _G.Hop_Settings = {
+                ["Find Tushita"] = false
+            }
+            getgenv().Key = "MARU-K13E1-9UIP-45J9-AJQ0Q-KVOK2"
+            getgenv().id = "969581952531316827"
+            getgenv().Script_Mode = "Kaitun_Script"
+            loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/e1c3fb1e210e932600653f256d136b6e.lua"))()  
+        end)
+        repeat
+            task.wait()
+        until game:IsLoaded()
+        task.wait(10)
+        print("Start")
+
+        while true do
+            task.wait(5)
+            setfpscap(10)
+            -- if game:GetService("Stats"):GetTotalMemoryUsageMb() >= 3000 then
+            --     game:Shutdown()
+            -- end
+        end
     else
-                repeat task.wait() until game:IsLoaded()
-        repeat task.wait() until game.Players
-        repeat task.wait() until game.Players.LocalPlayer
-        repeat task.wait() until game.Players.LocalPlayer:FindFirstChild("PlayerGui")
-        _G.Team = "Pirate" -- Marine / Pirate
-        getgenv().Script_Mode = "Kaitun_Script"
-        _G.MainSettings = {
-            ["EnabledHOP"] = true,
-            ['FPSBOOST'] = true,
-            ["FPSLOCKAMOUNT"] = 60,
-            ['WhiteScreen'] = true,
-            ['CloseUI'] = false,
-            ["NotifycationExPRemove"] = true,
-            ['AFKCheck'] = 150,
-            ["LockFragments"] = 20000,
-            ["LockFruitsRaid"] = {
-                    [1] = "Yeti-Yeti",
-                    [2] = "Dragon-Dragon",
-                    [3] = "Dough-Dough",
-                    [4] = "Kitsune-Kitsune",
-                    [5] = "Leopard-Leopard",
-                    [6] = "Venom-Venom",
-                    [7] = "Spirit-Spirit",
-                    [8] = "Mammoth-Mammoth",
-                    [9] = "Gas-Gas",
-                    [10] = "Lightning-Lightning",
-                    [11] = "T-Rex-T-Rex",
-            }
-        }
-        _G.SharkAnchor_Settings = {
-            ["Enabled_Farm"] = true,
-            ['FarmAfterMoney'] = 2500000
-        }
-        _G.Quests_Settings = {
-            ['Rainbow_Haki'] = true,
-            ["MusketeerHat"] = true,
-            ["PullLever"] = true,
-            ['DoughQuests_Mirror'] = {
-                ['Enabled'] = true,
-                ['UseFruits'] = true
-            }
-        }
-        _G.Races_Settings = {
-            ['Race'] = {
-                ['EnabledEvo'] = true,
-                ["v2"] = true,
-                ["v3"] = true,
-                ["Races_Lock"] = {
-                    ["Races"] = {
-                        ["Mink"] = true,
-                        ["Human"] = true,
-                        ["Fishman"] = true
-                    },
-                    ["RerollsWhenFragments"] = 20000
+        task.spawn(function()
+            repeat task.wait() until game:IsLoaded()
+            repeat task.wait() until game.Players
+            repeat task.wait() until game.Players.LocalPlayer
+            repeat task.wait() until game.Players.LocalPlayer:FindFirstChild("PlayerGui")
+            _G.Team = "Pirate" -- Marine / Pirate
+            getgenv().Script_Mode = "Kaitun_Script"
+            _G.MainSettings = {
+                ["EnabledHOP"] = true,
+                ['FPSBOOST'] = true,
+                ["FPSLOCKAMOUNT"] = 60,
+                ['WhiteScreen'] = true,
+                ['CloseUI'] = false,
+                ["NotifycationExPRemove"] = true,
+                ['AFKCheck'] = 150,
+                ["LockFragments"] = 20000,
+                ["LockFruitsRaid"] = {
+                        [1] = "Yeti-Yeti",
+                        [2] = "Dragon-Dragon",
+                        [3] = "Dough-Dough",
+                        [4] = "Kitsune-Kitsune",
+                        [5] = "Leopard-Leopard",
+                        [6] = "Venom-Venom",
+                        [7] = "Spirit-Spirit",
+                        [8] = "Mammoth-Mammoth",
+                        [9] = "Gas-Gas",
+                        [10] = "Lightning-Lightning",
+                        [11] = "T-Rex-T-Rex",
                 }
             }
-        }
-        _G.Fruits_Settings = {
-            ['Main_Fruits'] = {},
-            ['Select_Fruits'] = {"Ice-Ice", "Light-Light", "Dark-Dark","Rumble-Rumble","Magma-Magma",}
-        }
-        _G.Settings_Melee = {
-            ['Superhuman'] = true,
-            ['DeathStep'] = true,
-            ['SharkmanKarate'] = true,
-            ['ElectricClaw'] = true,
-            ['DragonTalon'] = true,
-            ['Godhuman'] = true
-        }
-        _G.SwordSettings = {
-            ['Saber'] = true,
-            ["Pole"] = false,
-            ['MidnightBlade'] = false,
-            ['Shisui'] = true,
-            ['Saddi'] = true,
-            ['Wando'] = true,
-            ['Yama'] = true,
-            ['Rengoku'] = false,
-            ['Canvander'] = false,
-            ['BuddySword'] = false,
-            ['TwinHooks'] = false,
-            ['HallowScryte'] = false,
-            ['TrueTripleKatana'] = true,
-            ['CursedDualKatana'] = true
-        }
-        _G.GunSettings = {
-            ['Kabucha'] = false,
-            ['SerpentBow'] = false,
-            ['SoulGuitar'] = false
-        }
-        _G.FarmMastery_Settings = {
-            ['Melee'] = false,
-            ['Sword'] = false,
-            ['DevilFruits'] = true,
-            ['Select_Swords'] = {
-                ["AutoSettings"] = true,
-                ["ManualSettings"] = {
-                    "Saber",
-                    "Buddy Sword"
+            _G.SharkAnchor_Settings = {
+                ["Enabled_Farm"] = true,
+                ['FarmAfterMoney'] = 2500000
+            }
+            _G.Quests_Settings = {
+                ['Rainbow_Haki'] = true,
+                ["MusketeerHat"] = true,
+                ["PullLever"] = true,
+                ['DoughQuests_Mirror'] = {
+                    ['Enabled'] = true,
+                    ['UseFruits'] = true
                 }
             }
-        }
-        _G.Hop_Settings = {
-            ["Find Tushita"] = false
-        }
-        getgenv().Key = "MARU-K13E1-9UIP-45J9-AJQ0Q-KVOK2"
-        getgenv().id = "969581952531316827"
-        getgenv().Script_Mode = "Kaitun_Script"
-        loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/e1c3fb1e210e932600653f256d136b6e.lua"))()  
+            _G.Races_Settings = {
+                ['Race'] = {
+                    ['EnabledEvo'] = true,
+                    ["v2"] = true,
+                    ["v3"] = true,
+                    ["Races_Lock"] = {
+                        ["Races"] = {
+                            ["Mink"] = true,
+                            ["Human"] = true,
+                            ["Fishman"] = true
+                        },
+                        ["RerollsWhenFragments"] = 20000
+                    }
+                }
+            }
+            _G.Fruits_Settings = {
+                ['Main_Fruits'] = {},
+                ['Select_Fruits'] = {"Ice-Ice", "Light-Light", "Dark-Dark","Rumble-Rumble","Magma-Magma",}
+            }
+            _G.Settings_Melee = {
+                ['Superhuman'] = true,
+                ['DeathStep'] = true,
+                ['SharkmanKarate'] = true,
+                ['ElectricClaw'] = true,
+                ['DragonTalon'] = true,
+                ['Godhuman'] = true
+            }
+            _G.SwordSettings = {
+                ['Saber'] = true,
+                ["Pole"] = false,
+                ['MidnightBlade'] = false,
+                ['Shisui'] = true,
+                ['Saddi'] = true,
+                ['Wando'] = true,
+                ['Yama'] = true,
+                ['Rengoku'] = false,
+                ['Canvander'] = false,
+                ['BuddySword'] = false,
+                ['TwinHooks'] = false,
+                ['HallowScryte'] = false,
+                ['TrueTripleKatana'] = true,
+                ['CursedDualKatana'] = true
+            }
+            _G.GunSettings = {
+                ['Kabucha'] = false,
+                ['SerpentBow'] = false,
+                ['SoulGuitar'] = false
+            }
+            _G.FarmMastery_Settings = {
+                ['Melee'] = false,
+                ['Sword'] = false,
+                ['DevilFruits'] = true,
+                ['Select_Swords'] = {
+                    ["AutoSettings"] = true,
+                    ["ManualSettings"] = {
+                        "Saber",
+                        "Buddy Sword"
+                    }
+                }
+            }
+            _G.Hop_Settings = {
+                ["Find Tushita"] = false
+            }
+            getgenv().Key = "MARU-K13E1-9UIP-45J9-AJQ0Q-KVOK2"
+            getgenv().id = "969581952531316827"
+            getgenv().Script_Mode = "Kaitun_Script"
+            loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/e1c3fb1e210e932600653f256d136b6e.lua"))()  
+        end)
+        repeat
+            task.wait()
+        until game:IsLoaded()
+        task.wait(10)
+        print("Start")
+
+        while true do
+            task.wait(5)
+            setfpscap(10)
+            -- if game:GetService("Stats"):GetTotalMemoryUsageMb() >= 3000 then
+            --     game:Shutdown()
+            -- end
+        end
     end
 end
 
