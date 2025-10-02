@@ -427,7 +427,7 @@ if levelplayer < 2800 then
             local levelplayer = getLevel()
             local SwordCDK = checkGod()
             if SwordCDK and levelplayer >= 2800 then
-                game:Shutdown()
+                game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, game.Players.LocalPlayer)
             end
         end
     end)
@@ -436,7 +436,7 @@ elseif namefrutis == "" or fruitAwank == false or _G.CurrentF < _G.MaxF or _G.Cu
     RunScript("maru")
     task.spawn(function()
         while task.wait(5) do
-            print("2")
+            print("Farm Frutis")
             local namefrutis = player.Data.DevilFruit.Value
             local fruitAwank = isFruitFullyAwakened()
             if namefrutis ~= '' then
@@ -444,7 +444,7 @@ elseif namefrutis == "" or fruitAwank == false or _G.CurrentF < _G.MaxF or _G.Cu
                 _G.CurrentF = CheckCurrentMastery(namefrutis)
             end
             if namefrutis ~= "" and fruitAwank == true and _G.CurrentF >= _G.MaxF then
-                game:Shutdown()
+                game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, game.Players.LocalPlayer)
                 return
             end
         end
@@ -458,7 +458,7 @@ elseif SwordCDK == false then
             print("SwordCDK == false")
             local SwordCDK = checkCDK()
             if SwordCDK then
-                game:Shutdown()
+                game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, game.Players.LocalPlayer)
                 return
             end
         end
