@@ -463,7 +463,7 @@ if levelplayer < 2800 then
     end)
 elseif namefrutis == "" or fruitAwank == false or _G.CurrentF < _G.MaxF or _G.CurrentF == 0 then
     print("Maru")
-    RunScript("maru")
+    RunScript("banana")
     task.spawn(function()
         while task.wait(5) do
             print("Farm Frutis")
@@ -495,5 +495,5 @@ elseif SwordCDK == false then
     end)
 elseif SwordCDK then
     print("Maru")
-    RunScript("maru")
+    RunScript("banana")
 end
