@@ -664,12 +664,3 @@ end
 
 updateStatusUI()
 main()
-
-local vim = game:GetService("VirtualInputManager")
-task.spawn(function()
-    while true do 
-        vim:SendKeyEvent(true, Enum.KeyCode.LeftShift, false, game)  -- กด
-        task.wait(0.1)
-        vim:SendKeyEvent(false, Enum.KeyCode.LeftShift, false, game) -- ปล่อย
-    end
-end)
