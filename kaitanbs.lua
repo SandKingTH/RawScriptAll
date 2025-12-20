@@ -359,7 +359,7 @@ task.spawn(function()
         if jobid then
             print("NEW JOBID:", jobid)
             local TeleportService = game:GetService("TeleportService")
-            TeleportService:TeleportToPlaceInstance(placeId, jobid, game.Players.LocalPlayer)
+            TeleportService:TeleportToPlaceInstance(PlaceID, jobid, game.Players.LocalPlayer)
         else
             warn("No jobid received")
             game:Shutdown()
