@@ -254,6 +254,12 @@ local function checkduplicate()
     end
 end
 
+local function lookfps(fps)
+    while true do 
+        setfpscap(fps)
+        task.wait(5)
+    end
+end
 task.spawn(function()
     local cars = getOwnedCars()
     print("Owned cars:")
@@ -294,6 +300,9 @@ task.spawn(function()
                 },
             }
             loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/28d9e130cb0559d30e2c20b5c851b7ef.lua"))()
+        end)
+        task.spawn(function()
+            lookfps(5)
         end)
         return 0
     end
@@ -413,6 +422,9 @@ task.spawn(function()
             task.spawn(function()
                 checkduplicate()
             end)
+            task.spawn(function()
+                lookfps(30)
+            end)
             return 3
         end
     end
@@ -454,6 +466,9 @@ task.spawn(function()
         task.spawn(function()
             checkduplicate()
         end)
+        task.spawn(function()
+            lookfps(30)
+        end)
         return 4
     end
 end)
@@ -467,7 +482,6 @@ task.spawn(function()
     local kickThreshold = 5 * 60
     while true do
         task.wait(1)
-        setfpscap(30)
         local currentMoney = DataCore.money.hand
         if currentMoney ~= lastMoney then
             lastMoney = currentMoney
@@ -548,3 +562,5 @@ task.spawn(function()
         end
     end)
 end)
+
+
