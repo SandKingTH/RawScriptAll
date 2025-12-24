@@ -260,12 +260,12 @@ task.spawn(function()
     for i, car in ipairs(cars) do
         print(i, car)
     end
-    if money < 200000 and #cars == 0 then
+    if money < 240000 and #cars == 0 then
         print("Not have money")
         task.spawn(function()
             getgenv().HermanosDevSetting = {
                 Farming = {
-                    Job = "Shelf Stocker",
+                    Job = "Shelf Stocker", -- Shelf Stocker, Cook, Janitor, Swiper, Fishing, Farming
                     Skillet = "Smart Select",
                     BuySkillet = false,
                     PaddleMode = "Nearest",
@@ -273,16 +273,22 @@ task.spawn(function()
                     BuyMop = false,
                     HackTools = "Smart Select",
                     HackToolsQuantity = 5,
-                    VehicleType = "Bike",
-                    VehicleSpeed = 55,
+                    Rod = "Smart Select",
+                    Bait = "Smart Select",
+                    BaitQuantity = 10,
+                    FishAmount = 10,
+                    AutoSellFish = false,
+                    IncludeFarming = false,
+                    VehicleType = "Bike", -- Bike, Car
+                    VehicleSpeed = 52,
                     AutoFarm = true,
+                    AfkChecker = true,
                     CashDeposit = 150,
                     AutoDeposit = true
                 },
-
                 General = {
                     HideName = true,
-                    AntiRagdoll = false,
+                    AntiRagdoll = true,
                     AntiKill = true,
                     AutoRespawn = true,
                 },
@@ -376,20 +382,27 @@ task.spawn(function()
                         Job = "Swiper", -- Shelf Stocker, Cook, Janitor, Swiper, Fishing, Farming
                         Skillet = "Smart Select",
                         BuySkillet = false,
-                        PaddleMode = "Nearest", -- Smart, Nearest
+                        PaddleMode = "Nearest",
                         Mop = "Smart Select",
                         BuyMop = false,
                         HackTools = "Smart Select",
                         HackToolsQuantity = 5,
+                        Rod = "Smart Select",
+                        Bait = "Smart Select",
+                        BaitQuantity = 10,
+                        FishAmount = 10,
+                        AutoSellFish = false,
+                        IncludeFarming = false,
                         VehicleType = "Car", -- Bike, Car
                         VehicleSpeed = speedGoKart,
                         AutoFarm = true,
+                        AfkChecker = true,
                         CashDeposit = 150,
                         AutoDeposit = true
                     },
                     General = {
                         HideName = true,
-                        AntiRagdoll = false,
+                        AntiRagdoll = true,
                         AntiKill = true,
                         AutoRespawn = true,
                     },
@@ -410,20 +423,27 @@ task.spawn(function()
                     Job = "Swiper", -- Shelf Stocker, Cook, Janitor, Swiper, Fishing, Farming
                     Skillet = "Smart Select",
                     BuySkillet = false,
-                    PaddleMode = "Nearest", -- Smart, Nearest
+                    PaddleMode = "Nearest",
                     Mop = "Smart Select",
                     BuyMop = false,
                     HackTools = "Smart Select",
                     HackToolsQuantity = 5,
+                    Rod = "Smart Select",
+                    Bait = "Smart Select",
+                    BaitQuantity = 10,
+                    FishAmount = 10,
+                    AutoSellFish = false,
+                    IncludeFarming = false,
                     VehicleType = "Car", -- Bike, Car
                     VehicleSpeed = 120,
                     AutoFarm = true,
+                    AfkChecker = true,
                     CashDeposit = 150,
                     AutoDeposit = true
                 },
                 General = {
                     HideName = true,
-                    AntiRagdoll = false,
+                    AntiRagdoll = true,
                     AntiKill = true,
                     AutoRespawn = true,
                 },
