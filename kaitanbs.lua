@@ -283,7 +283,7 @@ task.spawn(function()
                     Bait = "Smart Select",
                     BaitQuantity = 10,
                     FishAmount = 10,
-                    AutoSellFish = false,
+                    AutoSellFish = true,
                     IncludeFarming = false,
                     VehicleType = "Bike", -- Bike, Car
                     VehicleSpeed = 52,
@@ -401,7 +401,7 @@ task.spawn(function()
                         BaitQuantity = 10,
                         FishAmount = 10,
                         AutoSellFish = false,
-                        IncludeFarming = false,
+                        IncludeFarming = true,
                         VehicleType = "Car", -- Bike, Car
                         VehicleSpeed = speedGoKart,
                         AutoFarm = true,
@@ -445,7 +445,7 @@ task.spawn(function()
                     BaitQuantity = 10,
                     FishAmount = 10,
                     AutoSellFish = false,
-                    IncludeFarming = false,
+                    IncludeFarming = true,
                     VehicleType = "Car", -- Bike, Car
                     VehicleSpeed = 120,
                     AutoFarm = true,
