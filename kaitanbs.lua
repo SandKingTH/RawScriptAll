@@ -75,62 +75,6 @@ local POS = {
     ATMSpot = Vector3.new(113.7680892944336, 255.1897430419922, 463.8665771484375),
 }
 
-
-local function walkToTarget(targetPosition)
-    local plr_ = Players.LocalPlayer
-    local Char_ = plr_.Character or plr_.CharacterAdded:Wait()
-    if not Char_ or not Char_:FindFirstChild("HumanoidRootPart") or not Char_:FindFirstChild("Humanoid") then
-        warn("Character หรือ Humanoid ยังไม่พร้อม")
-        return
-    end
-    local Humanoid = Char_.Humanoid
-    local fromPos = Char_.HumanoidRootPart.Position
-
-    local path = game:GetService("PathfindingService"):CreatePath({
-        AgentRadius = 2,
-        AgentHeight = 3.7,
-        AgentCanJump = false,
-        AgentCanClimb = false,
-        AgentMaxSlope = 45,
-    })
-    path:ComputeAsync(fromPos, targetPosition)
-
-    Char_.Humanoid.WalkSpeed = 35
-    if path.Status ~= Enum.PathStatus.Success then
-        warn("Pathfinding ล้มเหลว: " .. tostring(path.Status))
-        return
-    end
-    for i, wp in ipairs(path:GetWaypoints()) do
-        local targetPos = wp.Position
-        Humanoid:MoveTo(targetPos)
-        local reached = false
-        local conn = Humanoid.MoveToFinished:Connect(function() reached = true end)
-        repeat task.wait() until reached
-        conn:Disconnect()
-        if (targetPos - Char_.HumanoidRootPart.Position).Magnitude > 10 then
-            warn("ไปไม่ถึงเป้าหมาย waypoint", i)
-            break
-        end
-    end
-end
-
-local function walkTo(targetPosition)
-    local Char_ = plr.Character or plr.CharacterAdded:Wait()
-    local Humanoid = Char_:WaitForChild("Humanoid")
-    local HRP = Char_:WaitForChild("HumanoidRootPart")
-    Humanoid.WalkSpeed = 30
-    Humanoid:MoveTo(targetPosition)
-    local finished = false
-    local conn
-    conn = Humanoid.MoveToFinished:Connect(function()
-        finished = true
-        if conn then conn:Disconnect() end
-    end)
-    while not finished and (targetPosition - HRP.Position).Magnitude > 2 do
-        task.wait(0.1)
-    end
-end
-
 local function getOwnedCars()
     local result = {}
     if not (DataCore.items and DataCore.items.car) then
@@ -144,43 +88,6 @@ local function getOwnedCars()
     return result
 end
 
-local function moveToWithAbort(targetPos, abortCheck, taskFlagKey)
-    local Char_ = plr.Character or plr.CharacterAdded:Wait()
-    local Humanoid = Char_:WaitForChild("Humanoid")
-    local HRP = Char_:WaitForChild("HumanoidRootPart")
-    Humanoid.WalkSpeed = 30
-    while runningTasks[taskFlagKey] and (targetPos - HRP.Position).Magnitude > 2 do
-        Humanoid:MoveTo(targetPos)
-        local t0 = os.clock()
-        while runningTasks[taskFlagKey] and (os.clock() - t0) < 0.3 do
-            task.wait(0.1)
-            if abortCheck and abortCheck() then
-                return false
-            end
-        end
-    end
-    return runningTasks[taskFlagKey]
-end
-
-local function checkHackableATMAtPosition(targetPos, tolerance)
-    tolerance = tolerance or 2
-    for _, atm in ipairs(workspace.Map.Props.ATMs:GetChildren()) do
-        for _, child in ipairs(atm:GetChildren()) do
-            local screen = child:FindFirstChild("Screen")
-            if screen then
-                local pos = child.Position
-                if (pos - targetPos).Magnitude <= tolerance then
-                    if screen.Enabled == false then
-                        return true, child, "ready"
-                    else
-                        return false, child, "not_ready"
-                    end
-                end
-            end
-        end
-    end
-    return false, nil, "not_found"
-end
 
 local function getJobIdFromAPI()
     local API_URL = "http://110.164.203.137:2699/getjobid"
@@ -216,7 +123,7 @@ local function getJobIdFromAPI()
     return data.jobid
 end
 
-local function checkduplicate()
+task.spawn(function() 
     local BASE = "http://110.164.203.137:2699/check-duplicate-jobid/"
     while true do
         local username = plr.Name
@@ -252,225 +159,64 @@ local function checkduplicate()
         end
         task.wait(10)
     end
-end
+end)
 
-local function lookfps(fps)
+task.spawn(function() lookfps(fps)
     while true do 
         setfpscap(fps)
         task.wait(5)
     end
-end
+end)
+
 task.spawn(function()
-    local cars = getOwnedCars()
-    print("Owned cars:")
-    for i, car in ipairs(cars) do
-        print(i, car)
-    end
-    if money < 240000 and #cars == 0 then
-        print("Not have money")
-        task.spawn(function()
-            getgenv().HermanosDevSetting = {
-                Farming = {
-                    Job = "Shelf Stocker", -- Shelf Stocker, Cook, Janitor, Swiper, Fishing, Farming
-                    Skillet = "Smart Select",
-                    BuySkillet = false,
-                    PaddleMode = "Nearest",
-                    Mop = "Smart Select",
-                    BuyMop = false,
-                    HackTools = "Smart Select",
-                    HackToolsQuantity = 5,
-                    Rod = "Smart Select",
-                    Bait = "Smart Select",
-                    BaitQuantity = 10,
-                    FishAmount = 10,
-                    AutoSellFish = true,
-                    IncludeFarming = false,
-                    VehicleType = "Bike", -- Bike, Car
-                    VehicleSpeed = 52,
-                    AutoFarm = true,
-                    AfkChecker = true,
-                    CashDeposit = 150,
-                    AutoDeposit = true
-                },
-                General = {
-                    HideName = true,
-                    AntiRagdoll = true,
-                    AntiKill = true,
-                    AutoRespawn = true,
-                },
-            }
-            loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/28d9e130cb0559d30e2c20b5c851b7ef.lua"))()
-        end)
-        task.spawn(function()
-            lookfps(5)
-        end)
-        return 0
-    end
+    getgenv().HermanosDevSetting = {
+        Farming = {
+            Job = "Swiper", -- Shelf Stocker, Cook, Janitor, Swiper, Fishing, Farming
 
-    if #cars == 0 then
-        print("Random car")
-        for _, v in pairs(game:GetDescendants()) do
-            if v.Name == "DoorSystem" then v:Destroy() end
-        end
-        runningTasks.getmany = true
-        
-        walkToTarget(POS.OUTDOOR)
-        walkTo(POS.INDOOR)
-        local checkgetmany = true
-        if money_hand < 200000 then
-            while runningTasks.getmany do
-                local ok = select(1, checkHackableATMAtPosition(POS.ATMCheck, 2))
-                if not ok then
-                    task.wait(0.5)
-                    continue
-                end
-                local oldmany = DataCore.money.hand or 0
-                if not runningTasks.getmany then break end
-                walkTo(POS.INDOOR)
-                local aborted = not moveToWithAbort(
-                    POS.ATMSpot,
-                    function()
-                        local _ok = select(1, checkHackableATMAtPosition(POS.ATMCheck, 2))
-                        return not _ok
-                    end,
-                    "getmany"
-                )
+            -- Cook
+            Skillet = "Smart Select",
+            BuySkillet = false,
 
-                if not runningTasks.getmany then break end
+            -- Janitor
+            PaddleMode = "Nearest", -- Smart, Nearest
+            Mop = "Smart Select",
+            BuyMop = false,
 
-                if aborted then
-                    warn("⤴️ ATM เปลี่ยนสถานะระหว่างเดิน: เดินกลับฐาน")
-                    walkTo(POS.INDOOR)
-                    task.wait(0.5)
-                    continue
-                end
-                ok = select(1, checkHackableATMAtPosition(POS.ATMCheck, 2))
-                if not ok then
-                    warn("⚠️ ถึงจุดแล้วแต่ ATM ไม่พร้อม: เดินกลับฐาน")
-                    walkTo(POS.INDOOR)
-                    task.wait(0.5)
-                    continue
-                end
-                local getmonay = 200000 - oldmany
-                pcall(function()
-                    return Get("transfer_funds", "bank", "hand", getmonay)
-                end)
-                walkTo(POS.INDOOR)
-                task.wait(2)
-                local newmany = DataCore.money.hand or 0
-                if newmany > oldmany then
-                    runningTasks.getmany = false
-                else
-                    walkTo(POS.INDOOR)
-                    task.wait(0.5)
-                end
-            end
+            -- ATM Hacking
+            HackTools = "Smart Select",
+            HackToolsQuantity = 5,
+            
+            -- Fishing
+            Rod = "Smart Select",
+            Bait = "Smart Select",
+            BaitQuantity = 10,
+            FishAmount = 10,
+            AutoSellFish = false,
+            
+            -- Farming
+            IncludeFarming = true,
 
-            print("✅ Getmany Done")
-        end
-        local omegaCarCrate = workspace.Map.Tiles.PrestigeDealerAndHousing.PrestigeCarDealer.Interior.Crates["Car Crate"].CrateOptions.Omega
-        Get("open_crate", omegaCarCrate, "money")
-        local jobid = getJobIdFromAPI()
-        if jobid then
-            print("NEW JOBID:", jobid)
-            local TeleportService = game:GetService("TeleportService")
-            TeleportService:TeleportToPlaceInstance(PlaceID, jobid, game.Players.LocalPlayer)
-        else
-            warn("No jobid received")
-            game:Shutdown()
-        end
-        return
-    end
-    for _, car in ipairs(cars) do 
-        if car == "Go Kart" then
-            print("Car: Go Kart")
-            local speedGoKart = 80
-            task.spawn(function()
-                getgenv().HermanosDevSetting = {
-                    Farming = {
-                        Job = "Swiper", -- Shelf Stocker, Cook, Janitor, Swiper, Fishing, Farming
-                        Skillet = "Smart Select",
-                        BuySkillet = false,
-                        PaddleMode = "Nearest",
-                        Mop = "Smart Select",
-                        BuyMop = false,
-                        HackTools = "Smart Select",
-                        HackToolsQuantity = 5,
-                        Rod = "Smart Select",
-                        Bait = "Smart Select",
-                        BaitQuantity = 10,
-                        FishAmount = 10,
-                        AutoSellFish = false,
-                        IncludeFarming = true,
-                        VehicleType = "Car", -- Bike, Car
-                        VehicleSpeed = speedGoKart,
-                        AutoFarm = true,
-                        AfkChecker = true,
-                        CashDeposit = 150,
-                        AutoDeposit = true
-                    },
-                    General = {
-                        HideName = true,
-                        AntiRagdoll = true,
-                        AntiKill = true,
-                        AutoRespawn = true,
-                    },
-                }
-                loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/28d9e130cb0559d30e2c20b5c851b7ef.lua"))()
-            end)
-            task.wait(30)
-            task.spawn(function()
-                checkduplicate()
-            end)
-            task.spawn(function()
-                lookfps(30)
-            end)
-            return 3
-        end
-    end
-    if #cars > 0 then
-        task.spawn(function()
-            getgenv().HermanosDevSetting = {
-                Farming = {
-                    Job = "Swiper", -- Shelf Stocker, Cook, Janitor, Swiper, Fishing, Farming
-                    Skillet = "Smart Select",
-                    BuySkillet = false,
-                    PaddleMode = "Nearest",
-                    Mop = "Smart Select",
-                    BuyMop = false,
-                    HackTools = "Smart Select",
-                    HackToolsQuantity = 5,
-                    Rod = "Smart Select",
-                    Bait = "Smart Select",
-                    BaitQuantity = 10,
-                    FishAmount = 10,
-                    AutoSellFish = false,
-                    IncludeFarming = true,
-                    VehicleType = "Car", -- Bike, Car
-                    VehicleSpeed = 120,
-                    AutoFarm = true,
-                    AfkChecker = true,
-                    CashDeposit = 150,
-                    AutoDeposit = true
-                },
-                General = {
-                    HideName = true,
-                    AntiRagdoll = true,
-                    AntiKill = true,
-                    AutoRespawn = true,
-                },
-            }
-            loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/28d9e130cb0559d30e2c20b5c851b7ef.lua"))()
-        end)
-        task.wait(30)
-        task.spawn(function()
-            checkduplicate()
-        end)
-        task.spawn(function()
-            lookfps(30)
-        end)
-        return 4
-    end
+            -- Vehicle
+            VehicleType = "Car", -- Bike, Car
+            VehicleSpeed = 52,
+
+            -- Auto Farm
+            AutoFarm = true,
+            AfkChecker = true,
+
+            -- Deposit
+            CashDeposit = 200,
+            AutoDeposit = true
+        },
+
+        General = {
+            HideName = true,
+            AntiRagdoll = true,
+            AntiKill = true,
+            AutoRespawn = true,
+        },
+    }
+    loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/28d9e130cb0559d30e2c20b5c851b7ef.lua"))()
 end)
 
 task.wait(10)
@@ -562,5 +308,3 @@ task.spawn(function()
         end
     end)
 end)
-
-
