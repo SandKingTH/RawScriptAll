@@ -124,7 +124,7 @@ local function getJobIdFromAPI()
 end
 
 task.spawn(function() 
-	task.wait(60)
+	task.wait(6)
     local BASE = "http://110.164.203.137:2699/check-duplicate-jobid/"
     while true do
         local username = plr.Name
