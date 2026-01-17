@@ -166,9 +166,9 @@ task.spawn(function()
     end
 end)
 
-task.spawn(function() lookfps(fps)
+task.spawn(function()
     while true do 
-        setfpscap(fps)
+        setfpscap(10)
         task.wait(5)
     end
 end)
