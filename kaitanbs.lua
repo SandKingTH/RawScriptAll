@@ -91,6 +91,10 @@ end
 
 local function getJobIdFromAPI()
     local API_URL = "http://110.164.203.137:2699/getjobid"
+    if PlaceID ~= 104715542330896 then
+        return nil
+    end
+    
     local ok, res = pcall(function()
         return Request({
             Url = API_URL,
