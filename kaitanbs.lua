@@ -228,38 +228,38 @@ task.spawn(function()
 end)
 
 task.wait(10)
-task.spawn(function()
-    print("Start")
-    local DataCore = require(game:GetService("ReplicatedStorage").Modules.Core.Data)
-    local lastMoney = DataCore.money.hand
-    local lastChangeTime = os.time()
-    local kickThreshold = 5 * 60
-    while true do
-        task.wait(1)
-        local currentMoney = DataCore.money.hand
-        if currentMoney ~= lastMoney then
-            lastMoney = currentMoney
-            lastChangeTime = os.time()
-        else
-            if os.time() - lastChangeTime >= kickThreshold then
-                local Players = game:GetService("Players")
-                local player = Players.LocalPlayer or Players:GetPlayerFromCharacter(script.Parent)
-                if player then
-                    local jobid = getJobIdFromAPI()
-                    if jobid then
-                        print("NEW JOBID:", jobid)
-                        local TeleportService = game:GetService("TeleportService")
-                        TeleportService:TeleportToPlaceInstance(PlaceID, jobid, game.Players.LocalPlayer)
-                    else
-                        warn("No jobid received")
-                        game:Shutdown()
-                    end
-                end
-                break
-            end
-        end
-    end
-end)
+-- task.spawn(function()
+--     print("Start")
+--     local DataCore = require(game:GetService("ReplicatedStorage").Modules.Core.Data)
+--     local lastMoney = DataCore.money.hand
+--     local lastChangeTime = os.time()
+--     local kickThreshold = 5 * 60
+--     while true do
+--         task.wait(1)
+--         local currentMoney = DataCore.money.hand
+--         if currentMoney ~= lastMoney then
+--             lastMoney = currentMoney
+--             lastChangeTime = os.time()
+--         else
+--             if os.time() - lastChangeTime >= kickThreshold then
+--                 local Players = game:GetService("Players")
+--                 local player = Players.LocalPlayer or Players:GetPlayerFromCharacter(script.Parent)
+--                 if player then
+--                     local jobid = getJobIdFromAPI()
+--                     if jobid then
+--                         print("NEW JOBID:", jobid)
+--                         local TeleportService = game:GetService("TeleportService")
+--                         TeleportService:TeleportToPlaceInstance(PlaceID, jobid, game.Players.LocalPlayer)
+--                     else
+--                         warn("No jobid received")
+--                         game:Shutdown()
+--                     end
+--                 end
+--                 break
+--             end
+--         end
+--     end
+-- end)
 
 task.spawn(function()
     local API_URL = "http://110.164.203.137:2699/player"
