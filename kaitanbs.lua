@@ -130,6 +130,9 @@ end
 task.spawn(function() 
 	task.wait(6)
     local BASE = "http://110.164.203.137:2699/check-duplicate-jobid/"
+    if PlaceID ~= 104715542330896 then
+        return
+    end
     while true do
         local username = plr.Name
         local url = BASE .. HttpService:UrlEncode(username) .. "?threshold=3"
