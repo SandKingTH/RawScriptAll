@@ -29,7 +29,7 @@ function getWeightedRandom()
     if roll <= 70 then
         return "Swiper"
     else
-        return "Cook"
+        return "Shelf Stocker"
     end
 end
 
