@@ -24,6 +24,15 @@ if SplashModule.in_loading_screen.get() then
     task.wait(3)
 end
 
+function getWeightedRandom()
+    local roll = math.random(100)
+    if roll <= 70 then
+        return "Swiper"
+    else
+        return "Cook"
+    end
+end
+
 local DataCore = require(game:GetService("ReplicatedStorage").Modules.Core.Data)
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
@@ -37,7 +46,9 @@ local TeleportService = game:GetService("TeleportService")
 local HttpService = game:GetService("HttpService")
 local Request = (syn and syn.request) or request or (http and http.request) or http_request
 local PlaceID = game.PlaceId
-local checkFram = (math.random(2) == 1) and "Swiper" or "Shelf Stocker"
+local checkFram = getWeightedRandom()
+
+
 local runningTasks = {
     key2 = false,
     getmany = false,
@@ -179,7 +190,7 @@ task.spawn(function()
     elseif checkFram == "Shelf Stocker" then
         return nil
     end
-    
+
     while true do
         local username = plr.Name
         local url = BASE .. HttpService:UrlEncode(username) .. "?threshold=3"
