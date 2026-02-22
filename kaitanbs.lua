@@ -104,8 +104,6 @@ local function getJobIdFromAPI()
     local API_URL = "http://110.164.203.137:2699/getjobid"
     if PlaceID ~= 104715542330896 then
         return nil
-    elseif checkFram == "Shelf Stocker" then
-        return nil
     end
 
     
@@ -186,8 +184,6 @@ task.spawn(function()
 	task.wait(20)
     local BASE = "http://110.164.203.137:2699/check-duplicate-jobid/"
     if PlaceID ~= 104715542330896 then
-        return nil
-    elseif checkFram == "Shelf Stocker" then
         return nil
     end
 
