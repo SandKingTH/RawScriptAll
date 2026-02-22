@@ -237,7 +237,7 @@ end)
 task.spawn(function()
     getgenv().HermanosDevSetting = {
         Farming = {
-            Job = checkFram, -- Shelf Stocker, Cook, Janitor, Swiper, Fishing, Farming
+            Job = "Swiper", -- Shelf Stocker, Cook, Janitor, Swiper, Fishing, Farming
 
             -- Cook
             Skillet = "Smart Select",
@@ -319,7 +319,7 @@ task.spawn(function()
 end)
 
 task.spawn(function()
-    local LIMIT_SECONDS = 30 * 60
+    local LIMIT_SECONDS = 90 * 60
     task.delay(LIMIT_SECONDS, function()
         if localPlayer and localPlayer.Parent then
             local jobid = getJobIdFromAPI()
