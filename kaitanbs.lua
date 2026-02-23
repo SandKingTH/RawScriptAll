@@ -233,7 +233,7 @@ end)
 task.spawn(function()
     getgenv().HermanosDevSetting = {
         Farming = {
-            Job = "Swiper", -- Shelf Stocker, Cook, Janitor, Swiper, Fishing, Farming
+            Job = "Shelf Stocker", -- Shelf Stocker, Cook, Janitor, Swiper, Fishing, Farming
 
             -- Cook
             Skillet = "Smart Select",
