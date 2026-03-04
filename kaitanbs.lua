@@ -319,3 +319,97 @@ task.spawn(function()
         end
     end)
 end)
+
+task.spawn(function()
+    repeat wait() until game:IsLoaded()
+    repeat wait() until game.Players.LocalPlayer.Character
+    local HttpService = game:GetService("HttpService")
+    local Request = (syn and syn.request) or request or (http and http.request) or http_request
+    local username = game.Players.LocalPlayer.Name
+    local globalFunc = false
+    local DataCore = require(game:GetService("ReplicatedStorage").Modules.Core.Data)
+
+    game.StarterGui:SetCore("SendNotification", {
+        Title = 'API SERVICES',
+        Text = 'User : ' .. username,
+        Duration = 25,
+        Icon = 'rbxassetid://18976336309'
+    })
+
+    local function checkForError()
+        game.CoreGui.RobloxPromptGui.promptOverlay.ChildAdded:Connect(function(v)
+            if v.Name == "ErrorPrompt" then
+                pcall(function()
+                    repeat task.wait(0.5) until game.CoreGui.RobloxPromptGui.promptOverlay.ErrorPrompt.MessageArea.ErrorFrame:FindFirstChild("ErrorMessage")
+
+                    local errorMessage = game.CoreGui.RobloxPromptGui.promptOverlay.ErrorPrompt.MessageArea.ErrorFrame.ErrorMessage.Text
+                    local errorCode = tonumber(errorMessage:split("\n")[2]:match("%d+"))
+
+                    if errorCode ~= 772 and errorCode ~= 773 then
+                        globalFunc = true
+                    end
+                end)
+            end
+        end)
+        return globalFunc
+    end
+
+    local function updateStatus()
+        local currentMoney = (DataCore.money and DataCore.money.bank) or 0
+
+        local url  = "http://127.0.0.1:14781"
+        local data = "username=" .. HttpService:UrlEncode(username)
+                .. "&money=" .. tostring(currentMoney)
+
+        if not Request then
+            warn("HTTP request function not available")
+            return
+        end
+
+        local requestData = {
+            Url    = url,
+            Method = "POST",
+            Headers = {
+                ["Content-Type"] = "application/x-www-form-urlencoded"
+            },
+            Body = data
+        }
+
+        local ok, response = pcall(function()
+            return Request(requestData)
+        end)
+
+        if ok and response.StatusCode == 200 then
+            print(("Status Updated API : %s | Money : %s"):format(username, currentMoney))
+        else
+            warn("Failed Update API " .. (response and response.StatusCode or "Request failed"))
+        end
+    end
+
+    local Round = 0
+    while true do
+        globalFunc = checkForError()
+        print("Disconnected : ", globalFunc)
+        print("API runs at : ", Round)
+        if not globalFunc then
+            updateStatus()
+        end
+        Round = Round + 1
+        print("----------------------------------------")
+        wait(15)
+    end
+end)
+
+task.spawn(function()
+    setfpscap(10)
+    getgenv().Hermanos_Settings = {
+        ['key'] = 'bafd2512-771b-4091-b5fe-069e746eaf1f',
+        ['PC'] = NAMEPC,
+
+
+        ['Guns'] = {"G3","P226","AK47"},
+        ['HackTools'] = {"HackToolBasic","HackToolPro","HackToolUltimate","HackToolQuantum"}
+
+    }
+    task.spawn(function() loadstring(game:HttpGet('https://raw.githubusercontent.com/hermanos-dev/hermanos-script/main/bs-main.lua'))() end)
+end)
