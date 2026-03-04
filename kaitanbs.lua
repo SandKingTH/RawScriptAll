@@ -24,15 +24,6 @@ if SplashModule.in_loading_screen.get() then
     task.wait(3)
 end
 
-function getWeightedRandom()
-    local roll = math.random(100)
-    if roll <= 70 then
-        return "Swiper"
-    else
-        return "Shelf Stocker"
-    end
-end
-
 local DataCore = require(game:GetService("ReplicatedStorage").Modules.Core.Data)
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
@@ -46,7 +37,6 @@ local TeleportService = game:GetService("TeleportService")
 local HttpService = game:GetService("HttpService")
 local Request = (syn and syn.request) or request or (http and http.request) or http_request
 local PlaceID = game.PlaceId
-local checkFram = getWeightedRandom()
 
 
 local runningTasks = {
@@ -231,54 +221,53 @@ task.spawn(function()
 end)
 
 task.spawn(function()
-    getgenv().HermanosDevSetting = {
-        Farming = {
-            Job = "Shelf Stocker", -- Shelf Stocker, Cook, Janitor, Swiper, Fishing, Farming
+	getgenv().HermanosDevSetting = {
+		Farming = {
+			Job = "Fishing",
 
-            -- Cook
-            Skillet = "Smart Select",
-            BuySkillet = false,
+			-- Cook
+			Skillet = "Smart Select",
+			BuySkillet = false,
 
-            -- Janitor
-            PaddleMode = "Nearest", -- Smart, Nearest
-            Mop = "Smart Select",
-            BuyMop = false,
+			-- Janitor
+			PaddleMode = "Nearest",
+			Mop = "Smart Select",
+			BuyMop = false,
 
-            -- ATM Hacking
-            HackTools = "Smart Select",
-            HackToolsQuantity = 5,
-            
-            -- Fishing
-            Rod = "Smart Select",
-            Bait = "Smart Select",
-            BaitQuantity = 10,
-            FishAmount = 10,
-            AutoSellFish = false,
-            
-            -- Farming
-            IncludeFarming = true,
+			-- ATM Hacking
+			HackTools = "Smart Select",
+			HackToolsQuantity = 5,
+			
+			-- Fishing
+			Rod = "Smart Select",
+			Bait = "Smart Select",
+			BaitQuantity = 10,
+			FishAmount = 10,
+			
+			-- Farming
+			IncludeFarming = false,
 
-            -- Vehicle
-            VehicleType = "Car", -- Bike, Car
-            VehicleSpeed = 52,
+			-- Vehicle
+			VehicleType = "Bike", -- Bike, Car
+			VehicleSpeed = 52,
 
-            -- Auto Farm
-            AutoFarm = true,
-            AfkChecker = true,
+			-- Auto Farm
+			AutoFarm = true,
+			AfkChecker = true,
 
-            -- Deposit
-            CashDeposit = 200,
-            AutoDeposit = true
-        },
+			-- Deposit
+			CashDeposit = 200,
+			AutoDeposit = true
+		},
 
-        General = {
-            HideName = true,
-            AntiRagdoll = true,
-            AntiKill = true,
-            AutoRespawn = true,
-        },
-    }
-    loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/28d9e130cb0559d30e2c20b5c851b7ef.lua"))()
+		General = {
+			HideName = true,
+			AntiRagdoll = true,
+			AntiKill = true,
+			AutoRespawn = true,
+		},
+	}
+	loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/28d9e130cb0559d30e2c20b5c851b7ef.lua"))()
 end)
 
 task.spawn(function()
