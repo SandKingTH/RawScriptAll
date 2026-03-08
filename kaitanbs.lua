@@ -24,6 +24,11 @@ if SplashModule.in_loading_screen.get() then
     task.wait(3)
 end
 
+
+local Player = game.Players.LocalPlayer
+local FolderName = "NextPlayFF"
+local FileName = FolderName .. "/" .. Player.Name .. "_StorageFram.json"
+
 local DataCore = require(game:GetService("ReplicatedStorage").Modules.Core.Data)
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
@@ -38,6 +43,13 @@ local HttpService = game:GetService("HttpService")
 local Request = (syn and syn.request) or request or (http and http.request) or http_request
 local PlaceID = game.PlaceId
 
+local Jobs = {"Shelf Stocker", "Cook", "Janitor", "Fishing"}
+local AvailableJobs = {unpack(Jobs)}
+local StorageFram = {}
+
+if not isfolder(FolderName) then
+    makefolder(FolderName)
+end
 
 local runningTasks = {
     key2 = false,
@@ -58,7 +70,6 @@ local Send = function(...)
 	Authenticate.event += 1;
 	game:GetService("ReplicatedStorage").Remotes.Send:FireServer(Authenticate.event, ...)
 end
-
 local function getTotalMoney()
     local hand = DataCore.money.hand or 0
     local bank = DataCore.money.bank or 0
@@ -89,15 +100,34 @@ local function getOwnedCars()
     return result
 end
 
+local CONST1 = 1.1040895136738123
+local CONST2 = 0.10408951367381225
+
+local function level_to_xp(level)
+	local expTerm = 2 ^ (level / 7)
+	local xp = 0.125 * (level ^ 2 - level + 600 * ((expTerm - CONST1) / CONST2))
+	return math.floor(xp + 0.5)
+end
+
+local function xp_to_level(targetXP)
+	local low, high = 0, 100
+	while low <= high do
+		local mid = math.floor((low + high) / 2)
+		local midXP = level_to_xp(mid)
+		if midXP <= targetXP then
+			low = mid + 1
+		else
+			high = mid - 1
+		end
+	end
+	return high
+end
 
 local function getJobIdFromAPI()
     local API_URL = "http://110.164.203.137:2699/getjobid"
     if PlaceID ~= 104715542330896 then
         return nil
     end
-
-    
-    
     local ok, res = pcall(function()
         return Request({
             Url = API_URL,
@@ -128,6 +158,38 @@ local function getJobIdFromAPI()
         return nil
     end
     return data.jobid
+end
+
+local function SaveProgress()
+    local Data = {
+        Available = AvailableJobs,
+        History = StorageFram
+    }
+    writefile(FileName, HttpService:JSONEncode(Data))
+end
+
+local function LoadProgress()
+    if isfile(FileName) then
+        local success, result = pcall(function()
+            return HttpService:JSONDecode(readfile(FileName))
+        end)
+        if success and result then
+            AvailableJobs = result.Available or AvailableJobs
+            StorageFram = result.History or StorageFram
+            print("--- Loaded existing progress from JSON ---")
+        end
+    end
+end
+
+local function getFishCount()
+    local fishItems = DataCore.items.fish
+    local totalCount = 0
+    for _, category in pairs(fishItems) do
+        for _ in pairs(category) do
+            totalCount = totalCount + 1
+        end
+    end
+    return totalCount
 end
 
 task.spawn(function()
@@ -220,54 +282,40 @@ task.spawn(function()
     end
 end)
 
+
+LoadProgress()
+
 task.spawn(function()
-	getgenv().HermanosDevSetting = {
-		Farming = {
-			Job = "Fishing",
-
-			-- Cook
-			Skillet = "Smart Select",
-			BuySkillet = false,
-
-			-- Janitor
-			PaddleMode = "Nearest",
-			Mop = "Smart Select",
-			BuyMop = false,
-
-			-- ATM Hacking
-			HackTools = "Smart Select",
-			HackToolsQuantity = 5,
-			
-			-- Fishing
-			Rod = "Smart Select",
-			Bait = "Smart Select",
-			BaitQuantity = 10,
-			FishAmount = 10,
-			
-			-- Farming
-			IncludeFarming = false,
-
-			-- Vehicle
-			VehicleType = "Bike", -- Bike, Car
-			VehicleSpeed = 52,
-
-			-- Auto Farm
-			AutoFarm = true,
-			AfkChecker = true,
-
-			-- Deposit
-			CashDeposit = 200,
-			AutoDeposit = true
-		},
-
-		General = {
-			HideName = true,
-			AntiRagdoll = true,
-			AntiKill = true,
-			AutoRespawn = true,
-		},
-	}
-	loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/28d9e130cb0559d30e2c20b5c851b7ef.lua"))()
+    getgenv().HermanosDevSetting = {
+        Farming = {
+            Job = "", 
+            Skillet = "Smart Select",
+            BuySkillet = true,
+            PaddleMode = "Nearest",
+            Mop = "Smart Select",
+            BuyMop = true,
+            HackTools = "Smart Select",
+            HackToolsQuantity = 5,
+            Rod = "Smart Select",
+            Bait = "Smart Select",
+            BaitQuantity = 10,
+            FishAmount = 10,
+            IncludeFarming = true,
+            VehicleType = "Bike",
+            VehicleSpeed = 52,
+            AutoFarm = true,
+            AfkChecker = true,
+            CashDeposit = 200,
+            AutoDeposit = true
+        },
+        General = {
+            HideName = true,
+            AntiRagdoll = true,
+            AntiKill = true,
+            AutoRespawn = true,
+        },
+    }
+    loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/28d9e130cb0559d30e2c20b5c851b7ef.lua"))()
 end)
 
 task.spawn(function()
@@ -412,4 +460,69 @@ task.spawn(function()
 
     }
     task.spawn(function() loadstring(game:HttpGet('https://raw.githubusercontent.com/hermanos-dev/hermanos-script/main/bs-main.lua'))() end)
+end)
+
+task.spawn(function()
+    task.wait(20) 
+    if game.PlaceId ~= 104715542330896 then
+        getgenv().HermanosFarm.Farming.Job = "Fishing"
+        task.wait(400)
+        local jobid = getJobIdFromAPI()
+        if jobid then
+            print("NEW JOBID:", jobid)
+            local TeleportService = game:GetService("TeleportService")
+            TeleportService:TeleportToPlaceInstance(104715542330896, jobid, game.Players.LocalPlayer)
+        else
+            warn("No jobid received")
+            game:Shutdown()
+        end
+        return
+    end
+    local xp_fishing = DataCore.xp["fishing"]
+    local level_fishing = xp_fishing and xp_to_level(xp_fishing) or 0
+
+    while true do
+        if #AvailableJobs == 0 then
+            table.clear(StorageFram) 
+            AvailableJobs = {unpack(Jobs)}
+            SaveProgress()
+            print("--- [Cycle Reset] JSON Cleared & Restarted ---")
+        end
+        local randomIndex = math.random(1, #AvailableJobs)
+        local selectedJob = table.remove(AvailableJobs, randomIndex)
+        table.insert(StorageFram, selectedJob)
+        SaveProgress()
+        pcall(function()
+            getgenv().HermanosFarm.Farming.IncludeFarming = true
+        end)
+        if selectedJob == "Fishing" then
+            pcall(function()
+                getgenv().HermanosFarm.Farming.IncludeFarming = false
+            end)
+
+            Send("request_respawn")
+            task.wait(2)
+            pcall(function()
+                getgenv().HermanosFarm.Farming.Job = selectedJob
+            end)
+            print("Job changed to: " .. selectedJob .. " | Saved to JSON")
+            task.wait(600)
+            while getFishCount() > 0 do
+                task.wait(2)
+            end
+        elseif level_fishing > 40 then
+            pcall(function()
+                getgenv().HermanosFarm.Farming.Job = "Fishing"
+                getgenv().HermanosFarm.Farming.VehicleType = "Car"
+            end)
+            print("Job changed to: Fishing (Level > 40) | Saved to JSON")
+            return
+        else
+            pcall(function()
+                getgenv().HermanosFarm.Farming.Job = selectedJob
+            end)
+            print("Job changed to: " .. selectedJob .. " | Saved to JSON")
+            task.wait(300)
+        end
+    end
 end)
