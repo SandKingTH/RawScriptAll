@@ -506,7 +506,7 @@ task.spawn(function()
                 getgenv().HermanosFarm.Farming.Job = selectedJob
             end)
             print("Job changed to: " .. selectedJob .. " | Saved to JSON")
-            task.wait(600)
+            task.wait(300)
             while getFishCount() > 0 do
                 task.wait(2)
             end
