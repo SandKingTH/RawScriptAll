@@ -24,6 +24,7 @@ if SplashModule.in_loading_screen.get() then
     task.wait(3)
 end
 
+getgenv().CheckRan = true
 
 local Player = game.Players.LocalPlayer
 local FolderName = "NextPlayFF"
@@ -190,6 +191,52 @@ local function getFishCount()
         end
     end
     return totalCount
+end
+
+local function walkToTarget(targetPosition)
+    local plr_ = Players.LocalPlayer
+    local Char_ = plr_.Character or plr_.CharacterAdded:Wait()
+    if not Char_ or not Char_:FindFirstChild("HumanoidRootPart") or not Char_:FindFirstChild("Humanoid") then
+        warn("Character หรือ Humanoid ยังไม่พร้อม")
+        return
+    end
+    local Humanoid = Char_.Humanoid
+    local fromPos = Char_.HumanoidRootPart.Position
+
+    local path = PathfindingService:CreatePath({
+        AgentRadius = 2,
+        AgentHeight = 5,
+        AgentCanJump = false,
+        AgentCanClimb = false,
+        AgentMaxSlope = 45,
+    })
+    path:ComputeAsync(fromPos, targetPosition)
+
+
+    Char_.Humanoid.WalkSpeed = 35
+    if path.Status ~= Enum.PathStatus.Success then
+        warn("Pathfinding ล้มเหลว: " .. tostring(path.Status))
+        return
+    end
+
+    for i, wp in ipairs(path:GetWaypoints()) do
+        local targetPos = wp.Position
+        Humanoid:MoveTo(targetPos)
+
+        local reached = false
+        local conn
+        conn = Humanoid.MoveToFinished:Connect(function()
+            reached = true
+            if conn then conn:Disconnect() end
+        end)
+
+        repeat task.wait() until reached
+
+        if (targetPos - Char_.HumanoidRootPart.Position).Magnitude > 10 then
+            warn("ไปไม่ถึงเป้าหมาย waypoint", i)
+            break
+        end
+    end
 end
 
 task.spawn(function()
@@ -481,7 +528,7 @@ task.spawn(function()
     local xp_fishing = DataCore.xp["fishing"]
     local level_fishing = xp_fishing and xp_to_level(xp_fishing) or 0
 
-    while true do
+    while getgenv().CheckRan do
         if #AvailableJobs == 0 then
             table.clear(StorageFram) 
             AvailableJobs = {unpack(Jobs)}
@@ -524,5 +571,21 @@ task.spawn(function()
             print("Job changed to: " .. selectedJob .. " | Saved to JSON")
             task.wait(300)
         end
+    end
+end)
+
+task.spawn(function()
+    while true do
+        local targetPos = Vector3.new(-653.659973, 254.942307, 272.559204)
+        task.wait(1800)
+        local TimeToWait = math.random(120, 300)
+        while getFishCount() > 0 do
+            task.wait(2)
+        end
+        getgenv().CheckRan = false
+        getgenv().HermanosFarm.Farming.Job = ""
+        walkToTarget(targetPos)
+        task.wait(TimeToWait)
+        getgenv().CheckRan = true
     end
 end)
