@@ -287,23 +287,6 @@ task.spawn(function()
 end)
 
 task.spawn(function()
-    local LIMIT_SECONDS = 90 * 60
-    task.delay(LIMIT_SECONDS, function()
-        if localPlayer and localPlayer.Parent then
-            local jobid = getJobIdFromAPI()
-            if jobid then
-                print("NEW JOBID:", jobid)
-                local TeleportService = game:GetService("TeleportService")
-                TeleportService:TeleportToPlaceInstance(PlaceID, jobid, game.Players.LocalPlayer)
-            else
-                warn("No jobid received")
-                game:Shutdown()
-            end
-        end
-    end)
-end)
-
-task.spawn(function()
     repeat wait() until game:IsLoaded()
     repeat wait() until game.Players.LocalPlayer.Character
     local HttpService = game:GetService("HttpService")
