@@ -143,16 +143,20 @@ end
 task.spawn(function()
     local xp_swiper = DataCore.xp["swiper"]
     local level_swiper = xp_swiper and xp_to_level(xp_swiper) or 0
+    local hackToolCount
+    local trypecar
+
     if level_swiper < 20 then
-        local hackToolCount = 2
-        local trypecar = "Bike"
+        hackToolCount = 2
+        trypecar = "Bike"
     elseif level_swiper < 60 then
-        local hackToolCount = 5
-        local trypecar = "Car"
+        hackToolCount = 5
+        trypecar = "Car"
     else
-        local hackToolCount = 10
-        local trypecar = "Car"
+        hackToolCount = 10
+        trypecar = "Car"
     end
+
     getgenv().HermanosDevSetting = {
         Farming = {
             Job = "", 
@@ -182,9 +186,9 @@ task.spawn(function()
             AutoRespawn = true,
         },
     }
+
     loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/28d9e130cb0559d30e2c20b5c851b7ef.lua"))()
 end)
-
 
 local function getJobIdFromAPI()
     local API_URL = "http://110.164.203.137:2699/getjobid"
