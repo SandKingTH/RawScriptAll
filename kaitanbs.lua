@@ -134,11 +134,13 @@ local function xp_to_level(targetXP)
 	return high
 end
 
-local xp_cook = DataCore.xp["cook"]
-local level_cook = xp_cook and xp_to_level(xp_cook) or 0
-if level_cook < 30 then
-    table.insert(Jobs, "Cook")
-end
+-- local xp_cook = DataCore.xp["cook"]
+-- local level_cook = xp_cook and xp_to_level(xp_cook) or 0
+-- if level_cook < 30 then
+--     table.insert(Jobs, "Cook")
+-- end
+
+table.insert(Jobs, "Cook")
 
 task.spawn(function()
     local xp_swiper = DataCore.xp["swiper"]
