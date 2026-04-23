@@ -143,18 +143,14 @@ end
 task.spawn(function()
     local xp_swiper = DataCore.xp["swiper"]
     local level_swiper = xp_swiper and xp_to_level(xp_swiper) or 0
-    local hackToolCount
-    local trypecar
+    local hackToolCount = 5
 
     if level_swiper < 20 then
         hackToolCount = 2
-        trypecar = "Bike"
     elseif level_swiper < 60 then
         hackToolCount = 5
-        trypecar = "Car"
     else
         hackToolCount = 10
-        trypecar = "Car"
     end
 
     getgenv().HermanosDevSetting = {
@@ -172,7 +168,7 @@ task.spawn(function()
             BaitQuantity = 10,
             FishAmount = 10,
             IncludeFarming = true,
-            VehicleType = trypecar,
+            VehicleType = "Car",
             VehicleSpeed = 52,
             AutoFarm = true,
             AfkChecker = true,
