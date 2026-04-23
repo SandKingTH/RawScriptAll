@@ -1,36 +1,3 @@
-task.spawn(function()
-    getgenv().HermanosDevSetting = {
-        Farming = {
-            Job = "", 
-            Skillet = "Smart Select",
-            BuySkillet = true,
-            PaddleMode = "Nearest",
-            Mop = "Smart Select",
-            BuyMop = true,
-            HackTools = "Smart Select",
-            HackToolsQuantity = 5,
-            Rod = "Smart Select",
-            Bait = "Smart Select",
-            BaitQuantity = 10,
-            FishAmount = 10,
-            IncludeFarming = false,
-            VehicleType = "Bike",
-            VehicleSpeed = 52,
-            AutoFarm = true,
-            AfkChecker = true,
-            CashDeposit = 200,
-            AutoDeposit = true
-        },
-        General = {
-            HideName = true,
-            AntiRagdoll = true,
-            AntiKill = true,
-            AutoRespawn = true,
-        },
-    }
-    loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/28d9e130cb0559d30e2c20b5c851b7ef.lua"))()
-end)
-
 repeat task.wait() until game:IsLoaded()
 repeat task.wait() until game:GetService("Players").LocalPlayer:FindFirstChild("PlayerGui")
 task.wait(3)
@@ -39,6 +6,27 @@ local FLOAT_HEIGHT = 4
 local SPEED = 34
 getgenv().money_random = 0
 getgenv().Farmnow = ""
+local SplashModule = require(game.ReplicatedStorage.Modules.Game.SplashScreen)
+if SplashModule.in_loading_screen.get() then
+    workspace:SetAttribute("SkipCreator", true)  -- <- แก้ Workspace -> workspace
+    set_thread_identity(2)
+    SplashModule.in_loading_screen.set(false)
+    set_thread_identity(8)
+
+    local splashGui = game.Players.LocalPlayer:WaitForChild("PlayerGui"):FindFirstChild("SplashScreenGui")
+    if splashGui then splashGui:Destroy() end
+
+    local SoundService = game:GetService("SoundService")
+    for _, s in ipairs(SoundService:GetChildren()) do
+        if s:IsA("Sound") and s.SoundId == "rbxassetid://113169105768074" then
+            local tween = game:GetService("TweenService"):Create(s, TweenInfo.new(1), { Volume = 0 })
+            tween:Play()
+            tween.Completed:Wait()
+            s:Stop()
+        end
+    end
+    task.wait(3)
+end
 
 local Player = game.Players.LocalPlayer
 local FolderName = "NextPlayFF"
@@ -60,7 +48,7 @@ local PlaceID = game.PlaceId
 local PathfindingService = game:GetService("PathfindingService")
 local TweenService = game:GetService("TweenService")
 
-local Jobs = {"Shelf Stocker", "Cook", "Janitor"}
+local Jobs = {"Shelf Stocker", "Swiper"}
 local AvailableJobs = {unpack(Jobs)}
 local StorageFram = {}
 
@@ -102,6 +90,100 @@ local function getOwnedCars()
     end
     return result
 end
+
+local function CheckHackTool()
+    local items = DataCore.items.misc
+    local targetTools = {
+        ["HackToolBasic"] = true,
+        ["HackToolPro"] = true,
+        ["HackToolUltimate"] = true,
+        ["HackToolQuantum"] = true
+    }
+    for toolName, toolList in pairs(items) do
+        if targetTools[toolName] then
+            for _, itemData in pairs(toolList) do
+                if itemData.guid and itemData.guid ~= "" then
+                    return true
+                end
+            end
+        end
+    end
+    return false
+end
+
+local CONST1 = 1.1040895136738123
+local CONST2 = 0.10408951367381225
+
+local function level_to_xp(level)
+	local expTerm = 2 ^ (level / 7)
+	local xp = 0.125 * (level ^ 2 - level + 600 * ((expTerm - CONST1) / CONST2))
+	return math.floor(xp + 0.5)
+end
+
+local function xp_to_level(targetXP)
+	local low, high = 0, 100
+	while low <= high do
+		local mid = math.floor((low + high) / 2)
+		local midXP = level_to_xp(mid)
+		if midXP <= targetXP then
+			low = mid + 1
+		else
+			high = mid - 1
+		end
+	end
+	return high
+end
+
+local xp_cook = DataCore.xp["cook"]
+local level_cook = xp_cook and xp_to_level(xp_cook) or 0
+if level_cook < 30 then
+    table.insert(Jobs, "Cook")
+end
+
+task.spawn(function()
+    local xp_swiper = DataCore.xp["swiper"]
+    local level_swiper = xp_swiper and xp_to_level(xp_swiper) or 0
+    if level_swiper < 20 then
+        local hackToolCount = 2
+        local trypecar = "Bike"
+    elseif level_swiper < 60 then
+        local hackToolCount = 5
+        local trypecar = "Car"
+    else
+        local hackToolCount = 10
+        local trypecar = "Car"
+    end
+    getgenv().HermanosDevSetting = {
+        Farming = {
+            Job = "", 
+            Skillet = "Smart Select",
+            BuySkillet = true,
+            PaddleMode = "Nearest",
+            Mop = "Smart Select",
+            BuyMop = true,
+            HackTools = "Smart Select",
+            HackToolsQuantity = hackToolCount,
+            Rod = "Smart Select",
+            Bait = "Smart Select",
+            BaitQuantity = 10,
+            FishAmount = 10,
+            IncludeFarming = true,
+            VehicleType = trypecar,
+            VehicleSpeed = 52,
+            AutoFarm = true,
+            AfkChecker = true,
+            CashDeposit = 200,
+            AutoDeposit = true
+        },
+        General = {
+            HideName = true,
+            AntiRagdoll = true,
+            AntiKill = true,
+            AutoRespawn = true,
+        },
+    }
+    loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/28d9e130cb0559d30e2c20b5c851b7ef.lua"))()
+end)
 
 
 local function getJobIdFromAPI()
@@ -162,6 +244,17 @@ local function LoadProgress()
     end
 end
 
+local function getFishCount()
+    local fishItems = DataCore.items.fish
+    local totalCount = 0
+    for _, category in pairs(fishItems) do
+        for _ in pairs(category) do
+            totalCount = totalCount + 1
+        end
+    end
+    return totalCount
+end
+
 task.spawn(function()
     local API_URL = "http://110.164.203.137:2699/player"
     while true do
@@ -201,7 +294,6 @@ task.spawn(function()
     end
 end)
 
-LoadProgress()
 
 task.spawn(function() 
 	task.wait(20)
@@ -253,6 +345,9 @@ task.spawn(function()
     end
 end)
 
+
+LoadProgress()
+
 task.spawn(function()
     print("Start")
     local DataCore = require(game:GetService("ReplicatedStorage").Modules.Core.Data)
@@ -284,6 +379,23 @@ task.spawn(function()
             end
         end
     end
+end)
+
+task.spawn(function()
+    local LIMIT_SECONDS = 90 * 60
+    task.delay(LIMIT_SECONDS, function()
+        if localPlayer and localPlayer.Parent then
+            local jobid = getJobIdFromAPI()
+            if jobid then
+                print("NEW JOBID:", jobid)
+                local TeleportService = game:GetService("TeleportService")
+                TeleportService:TeleportToPlaceInstance(PlaceID, jobid, game.Players.LocalPlayer)
+            else
+                warn("No jobid received")
+                game:Shutdown()
+            end
+        end
+    end)
 end)
 
 task.spawn(function()
@@ -361,14 +473,247 @@ task.spawn(function()
     end
 end)
 
+local function getGroundY(pos, character)
+    local params = RaycastParams.new()
+    params.FilterDescendantsInstances = {character}
+    params.FilterType = Enum.RaycastFilterType.Blacklist
+
+    local result = workspace:Raycast(
+        pos + Vector3.new(0,10,0),
+        Vector3.new(0,-50,0),
+        params
+    )
+    if result then
+        return result.Position.Y
+    end
+    return pos.Y
+end
+
+local function computePath(startPos, endPos)
+    local path = PathfindingService:CreatePath({
+        AgentRadius = 2,
+        AgentHeight = 5,
+        AgentCanJump = false,
+        AgentCanClimb = false,
+        AgentMaxSlope = 45,
+    })
+
+    path:ComputeAsync(startPos, endPos)
+    return path
+end
+
+local function moveToSmooth(root, targetPos, speed)
+    local startPos = root.Position
+    local distance = (startPos - targetPos).Magnitude
+    if distance < 0.1 then
+        return true
+    end
+    local duration = distance / speed
+    local elapsed = 0
+    while elapsed < duration do
+        local dt = RunService.Heartbeat:Wait()
+        elapsed += dt
+        local alpha = math.clamp(elapsed / duration, 0, 1)
+        local expected = startPos:Lerp(targetPos, alpha)
+        if (root.Position - expected).Magnitude > 12 then
+            return false
+        end
+
+        root.CFrame = CFrame.new(expected)
+    end
+
+    root.CFrame = CFrame.new(targetPos)
+    return true
+end
+
+local function tweenPathEased(targetPos)
+    local player = Players.LocalPlayer
+    local char = player.Character or player.CharacterAdded:Wait()
+    local root = char:WaitForChild("HumanoidRootPart")
+
+    local path = computePath(root.Position, targetPos)
+    if path.Status ~= Enum.PathStatus.Success then
+        warn("Pathfinding failed")
+        return
+    end
+
+    Send("set_sprinting_1", true)
+
+    for _, waypoint in ipairs(path:GetWaypoints()) do
+        if (root.Position - waypoint.Position).Magnitude < 3 then
+            continue
+        end
+
+        local groundY = getGroundY(waypoint.Position, char)
+        local floatPos = Vector3.new(
+            waypoint.Position.X,
+            groundY + FLOAT_HEIGHT,
+            waypoint.Position.Z
+        )
+
+        local success = moveToSmooth(root, floatPos, SPEED)
+
+        if not success then
+            warn("Rubberband detected → recalculating path")
+            return tweenPathEased(targetPos)
+        end
+    end
+end
+
+local function saveOrUpdateRollCost(rollCost)
+    local player = Players.LocalPlayer
+    local folder = "NP"
+
+    if not isfolder(folder) then
+        makefolder(folder)
+    end
+    local existingFile = nil
+    for _, file in ipairs(listfiles(folder)) do
+        if string.find(file, player.Name .. "_") and string.find(file, ".json") then
+            existingFile = file
+            break
+        end
+    end
+    if existingFile then
+        local data = HttpService:JSONDecode(readfile(existingFile))
+        data.cost = rollCost
+        writefile(existingFile, HttpService:JSONEncode(data))
+        print("Updated:", existingFile)
+    else
+        local rd = math.random(1000,9999)
+        local fileName = folder .. "/" .. player.Name .. "_" .. rd .. ".json"
+
+        local data = {
+            player = player.Name,
+            cost = rollCost
+        }
+        writefile(fileName, HttpService:JSONEncode(data))
+        print("Created:", fileName)
+    end
+end
+
+local function getSavedRollCost()
+    local player = Players.LocalPlayer
+    local folder = "NP"
+
+    if not isfolder(folder) then
+        return 0
+    end
+
+    for _, file in ipairs(listfiles(folder)) do
+        if string.find(file, player.Name .. "_") and string.find(file, ".json") then
+            local data = HttpService:JSONDecode(readfile(file))
+            return data.cost or 0
+        end
+    end
+
+    return 0
+end
+
+local function checkHackableATMAtPosition(targetPos, tolerance)
+    tolerance = tolerance or 2
+    for _, atm in ipairs(workspace.Map.Props.ATMs:GetChildren()) do
+        for _, child in ipairs(atm:GetChildren()) do
+            local screen = child:FindFirstChild("Screen")
+            if screen then
+                local pos = child.Position
+                if (pos - targetPos).Magnitude <= tolerance then
+                    if screen.Enabled == false then
+                        return true, child, "ready"
+                    else
+                        return false, child, "not_ready"
+                    end
+                end
+            end
+        end
+    end
+    return false, nil, "not_found"
+end
+
+local function Randomitem()
+    local newpost = Vector3.new(-191.962753, 255.460556, -242.276764)
+    tweenPathEased(newpost)
+    task.wait(3)
+    local money_hand = DataCore.money.hand
+    local money_bank = DataCore.money.bank
+
+    local plr = game.Players.LocalPlayer
+    local Char = plr.Character or plr.CharacterAdded:Wait()
+    local HumanoidRootPart = Char:WaitForChild("HumanoidRootPart")
+
+    print((HumanoidRootPart.Position - newpost).Magnitude)
+    print("ตำแหน่งปัจจุบัน:", HumanoidRootPart.Position)
+    if (HumanoidRootPart.Position - newpost).Magnitude < 50 then
+        while true do
+            local postatm = Vector3.new(-198.492996, 258.570984, -249.722015) 
+            local found, screen, status = checkHackableATMAtPosition(postatm,50)
+            if found and status == "ready" then
+                pcall(function()
+                    return Get("transfer_funds", "bank", "hand", DataCore.money.bank or 0)
+                end)
+                local new_money_hand = DataCore.money.hand
+                if new_money_hand > money_hand or money_bank == 0 then
+                    Get("open_crate",workspace:WaitForChild("Map"):WaitForChild("Tiles"):WaitForChild("GunShopTile"):WaitForChild("PatriotWeapons"):WaitForChild("Interior"):WaitForChild("Crates"):WaitForChild("Weapon Crate"):WaitForChild("CrateOptions"):WaitForChild("Superior"),"money")
+                    
+                    while true do
+                        local found2, screen2, status2 = checkHackableATMAtPosition(postatm,50)
+                        if found2 and status2 == "ready" then
+                            pcall(function()
+                                return Get("transfer_funds", "hand", "bank", DataCore.money.hand or 0)
+                            end)
+                            break
+                        end
+                    end
+                    local postout = Vector3.new(-187.8740997314453, 255.2150421142578, -137.7740936279297)
+                    tweenPathEased(postout)
+
+                    pcall(function()
+                        getgenv().HermanosFarm.Farming.AutoFarm = true
+                    end)
+                    return
+                else
+                    print("โอนเงินล้มเหลว หรือไม่มีการเปลี่ยนแปลงจำนวนเงินในมือ")
+                end
+            else
+                print("ยังไม่เจอ ATM ที่สามารถแฮกได้, สถานะ:", status)
+            end
+            task.wait(0.1)
+        end
+    else
+        print("ไม่สามารถเดินไปยังตำแหน่ง newpost ได้")
+        return
+    end
+end
+
 task.spawn(function()
     task.wait(20) 
 
     if game.PlaceId ~= 104715542330896 then
         getgenv().HermanosFarm.Farming.Job = "Shelf Stocker"
         task.wait(400)
-        game:Shutdown()
+        local jobid = getJobIdFromAPI()
+        if jobid then
+            print("NEW JOBID:", jobid)
+            local TeleportService = game:GetService("TeleportService")
+            TeleportService:TeleportToPlaceInstance(104715542330896, jobid, game.Players.LocalPlayer)
+        else
+            warn("No jobid received")
+            game:Shutdown()
+        end
         return
+    end
+    local xp_fishing = DataCore.xp["total_level"]
+    local level_fishing = xp_fishing and xp_to_level(xp_fishing) or 0
+
+    if getSavedRollCost() == 0 then
+        if level_fishing < 25 then
+            local rollCost = 4600
+            saveOrUpdateRollCost(rollCost)
+        else
+            local rollCost = DataCore.money.bank + DataCore.money.hand + 5000
+            saveOrUpdateRollCost(rollCost)
+            getgenv().money_random = rollCost
+        end
     end
 
     while true do
@@ -377,14 +722,32 @@ task.spawn(function()
             AvailableJobs = {unpack(Jobs)}
             SaveProgress()
         end
-
         local randomIndex = math.random(1, #AvailableJobs)
         getgenv().Farmnow = table.remove(AvailableJobs, randomIndex)
         table.insert(StorageFram, getgenv().Farmnow)
         SaveProgress()
         pcall(function()
-            getgenv().HermanosFarm.Farming.Job = getgenv().Farmnow
+            getgenv().HermanosFarm.Farming.IncludeFarming = true
         end)
-        task.wait(600)
+        if getgenv().Farmnow == "Swiper" then
+            pcall(function()
+                getgenv().HermanosFarm.Farming.IncludeFarming = false
+            end)
+
+            Send("request_respawn")
+            task.wait(2)
+            pcall(function()
+                getgenv().HermanosFarm.Farming.Job = getgenv().Farmnow
+            end)
+            task.wait(600)
+            while CheckHackTool() do
+                task.wait(2)
+            end
+        else
+            pcall(function()
+                getgenv().HermanosFarm.Farming.Job = getgenv().Farmnow
+            end)
+            task.wait(300)
+        end
     end
 end)
