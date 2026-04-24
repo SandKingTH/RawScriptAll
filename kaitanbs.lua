@@ -143,11 +143,11 @@ end
 table.insert(Jobs, "Cook")
 
 task.spawn(function()
-    local xp_swiper = DataCore.xp["swiper"]
+    local xp_swiper = DataCore.xp["atm_hacker"]
     local level_swiper = xp_swiper and xp_to_level(xp_swiper) or 0
     local hackToolCount = 5
 
-    if level_swiper < 20 then
+    if level_swiper < 30 then
         hackToolCount = 2
     elseif level_swiper < 60 then
         hackToolCount = 5
@@ -741,6 +741,21 @@ task.spawn(function()
             pcall(function()
                 getgenv().HermanosFarm.Farming.Job = getgenv().Farmnow
             end)
+            local xp_swiper = DataCore.xp["atm_hacker"]
+            local level_swiper = xp_swiper and xp_to_level(xp_swiper) or 0
+            local hackToolCount = 5
+
+            if level_swiper < 30 then
+                hackToolCount = 2
+            elseif level_swiper < 60 then
+                hackToolCount = 5
+            else
+                hackToolCount = 10
+            end
+            pcall(function()
+                getgenv().HermanosFarm.Farming.HackToolsQuantity = hackToolCount
+            end)
+
             task.wait(600)
             while CheckHackTool() do
                 task.wait(2)
