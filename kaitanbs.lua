@@ -134,13 +134,12 @@ local function xp_to_level(targetXP)
 	return high
 end
 
--- local xp_cook = DataCore.xp["cook"]
--- local level_cook = xp_cook and xp_to_level(xp_cook) or 0
--- if level_cook < 30 then
---     table.insert(Jobs, "Cook")
--- end
+local xp_cook = DataCore.xp["cook"]
+local level_cook = xp_cook and xp_to_level(xp_cook) or 0
+if level_cook < 30 then
+    table.insert(Jobs, "Cook")
+end
 
-table.insert(Jobs, "Cook")
 
 task.spawn(function()
     local xp_swiper = DataCore.xp["atm_hacker"]
@@ -720,7 +719,7 @@ task.spawn(function()
 
     while true do
         if #AvailableJobs == 0 then
-            table.clear(StorageFram) 
+            table.clear(StorageFram)
             AvailableJobs = {unpack(Jobs)}
             SaveProgress()
         end
@@ -731,6 +730,16 @@ task.spawn(function()
         pcall(function()
             getgenv().HermanosFarm.Farming.IncludeFarming = true
         end)
+
+        local xp_cook = DataCore.xp["cook"]
+        local level_cook = xp_cook and xp_to_level(xp_cook) or 0
+        if level_cook < 30 then
+            local index = table.find(Jobs, "Cook")
+            if index then
+                table.remove(Jobs, index)
+            end
+        end
+
         if getgenv().Farmnow == "Swiper" then
             pcall(function()
                 getgenv().HermanosFarm.Farming.IncludeFarming = false
