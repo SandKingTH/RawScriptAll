@@ -144,14 +144,21 @@ end
 task.spawn(function()
     local xp_swiper = DataCore.xp["atm_hacker"]
     local level_swiper = xp_swiper and xp_to_level(xp_swiper) or 0
-    local hackToolCount = 5
+    local hackToolCount = 2
 
-    if level_swiper < 30 then
+    if level_swiper < 50 then
         hackToolCount = 2
-    elseif level_swiper < 60 then
-        hackToolCount = 5
     else
-        hackToolCount = 10
+        hackToolCount = 5
+    end
+    local xp_cook = DataCore.xp["cook"]
+    local level_cook = xp_cook and xp_to_level(xp_cook) or 0
+    local usecar = "Bike"
+
+    if level_cook < 40 then
+        usecar = "Bike"
+    else 
+        usecar = "Car"
     end
 
     getgenv().HermanosDevSetting = {
@@ -169,7 +176,7 @@ task.spawn(function()
             BaitQuantity = 10,
             FishAmount = 10,
             IncludeFarming = true,
-            VehicleType = "Car",
+            VehicleType = usecar,
             VehicleSpeed = 52,
             AutoFarm = true,
             AfkChecker = true,
@@ -752,9 +759,9 @@ task.spawn(function()
             end)
             local xp_swiper = DataCore.xp["atm_hacker"]
             local level_swiper = xp_swiper and xp_to_level(xp_swiper) or 0
-            local hackToolCount = 5
+            local hackToolCount = 2
 
-            if level_swiper < 30 then
+            if level_swiper < 50 then
                 hackToolCount = 2
             else
                 hackToolCount = 5
