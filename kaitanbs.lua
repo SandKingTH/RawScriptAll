@@ -756,16 +756,14 @@ task.spawn(function()
 
             if level_swiper < 30 then
                 hackToolCount = 2
-            elseif level_swiper < 60 then
-                hackToolCount = 5
             else
-                hackToolCount = 10
+                hackToolCount = 5
             end
             pcall(function()
                 getgenv().HermanosFarm.Farming.HackToolsQuantity = hackToolCount
             end)
 
-            task.wait(600)
+            task.wait(300)
             while CheckHackTool() do
                 task.wait(2)
             end
