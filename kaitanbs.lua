@@ -155,7 +155,7 @@ task.spawn(function()
     local level_cook = xp_cook and xp_to_level(xp_cook) or 0
     local usecar = "Bike"
 
-    if level_cook < 40 then
+    if level_cook < 30 then
         usecar = "Bike"
     else 
         usecar = "Car"
