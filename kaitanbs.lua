@@ -697,8 +697,8 @@ task.spawn(function()
     repeat 
         wait(0.5) 
     until getgenv().HermanosFarm 
-    and getgenv().HermanosFarm.Farming 
-    and getgenv().HermanosFarm.Farming.Job ~= nil
+        and getgenv().HermanosFarm.Farming 
+        and getgenv().HermanosFarm.Farming.Job ~= nil
 
     if game.PlaceId ~= 104715542330896 then
         getgenv().HermanosFarm.Farming.Job = "Shelf Stocker"
