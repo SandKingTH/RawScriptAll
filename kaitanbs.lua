@@ -7,7 +7,8 @@ local SPEED = 34
 getgenv().money_random = 0
 getgenv().Farmnow = ""
 local SplashModule = require(game.ReplicatedStorage.Modules.Game.SplashScreen)
-if SplashModule.in_loading_screen.get() then
+local isFirstRun = SplashModule.in_loading_screen.get()  -- เก็บไว้ก่อน เพราะบล็อกล่างจะ set(false) ทิ้ง
+if isFirstRun then
     workspace:SetAttribute("SkipCreator", true)  -- <- แก้ Workspace -> workspace
     set_thread_identity(2)
     SplashModule.in_loading_screen.set(false)
@@ -92,7 +93,10 @@ local function getOwnedCars()
 end
 
 local function CheckHackTool()
-    local items = DataCore.items.misc
+    local items = DataCore.items and DataCore.items.misc
+    if not items then
+        return false
+    end
     local targetTools = {
         ["HackToolBasic"] = true,
         ["HackToolPro"] = true,
@@ -161,9 +165,15 @@ task.spawn(function()
         usecar = "Car"
     end
 
+    local firstJob = ""
+    if isFirstRun then
+        firstJob = Jobs[math.random(1, #Jobs)]
+        getgenv().Farmnow = firstJob
+    end
+
     getgenv().HermanosDevSetting = {
         Farming = {
-            Job = "", 
+            Job = firstJob,
             Skillet = "Smart Select",
             BuySkillet = true,
             PaddleMode = "Nearest",
@@ -422,22 +432,27 @@ task.spawn(function()
         Icon = 'rbxassetid://18976336309'
     })
 
-    local function checkForError()
-        game.CoreGui.RobloxPromptGui.promptOverlay.ChildAdded:Connect(function(v)
+    -- ผูก event ครั้งเดียว (เดิมถูกเรียกในลูปทุก 15 วิ ทำให้ connection รั่ว)
+    local function setupErrorWatcher()
+        local promptGui = game:GetService("CoreGui"):WaitForChild("RobloxPromptGui", 60)
+        if not promptGui then return end
+        local promptOverlay = promptGui:WaitForChild("promptOverlay", 60)
+        if not promptOverlay then return end
+
+        promptOverlay.ChildAdded:Connect(function(v)
             if v.Name == "ErrorPrompt" then
                 pcall(function()
-                    repeat task.wait(0.5) until game.CoreGui.RobloxPromptGui.promptOverlay.ErrorPrompt.MessageArea.ErrorFrame:FindFirstChild("ErrorMessage")
+                    local errorFrame = v:WaitForChild("MessageArea"):WaitForChild("ErrorFrame")
+                    local errorLabel = errorFrame:WaitForChild("ErrorMessage")
+                    local line2 = errorLabel.Text:split("\n")[2]
+                    local errorCode = line2 and tonumber(line2:match("%d+"))
 
-                    local errorMessage = game.CoreGui.RobloxPromptGui.promptOverlay.ErrorPrompt.MessageArea.ErrorFrame.ErrorMessage.Text
-                    local errorCode = tonumber(errorMessage:split("\n")[2]:match("%d+"))
-
-                    if errorCode ~= 772 and errorCode ~= 773 then
+                    if errorCode and errorCode ~= 772 and errorCode ~= 773 then
                         globalFunc = true
                     end
                 end)
             end
         end)
-        return globalFunc
     end
 
     local function updateStatus()
@@ -460,16 +475,17 @@ task.spawn(function()
         local ok, response = pcall(function()
             return Request(requestData)
         end)
-        if ok and response.StatusCode == 200 then
+        if ok and response and response.StatusCode == 200 then
             print(("Status Updated API : %s | Money : %s"):format(username, currentMoney))
         else
             warn("Failed Update API " .. (response and response.StatusCode or "Request failed"))
         end
     end
 
+    setupErrorWatcher()
+
     local Round = 0
     while true do
-        globalFunc = checkForError()
         print("Disconnected : ", globalFunc)
         print("API runs at : ", Round)
         if not globalFunc then
@@ -699,7 +715,7 @@ task.spawn(function()
     until getgenv().HermanosFarm 
         and getgenv().HermanosFarm.Farming 
         and getgenv().HermanosFarm.Farming.Job ~= nil
-    wait(40) 
+    wait(20) 
     if game.PlaceId ~= 104715542330896 then
         getgenv().HermanosFarm.Farming.Job = "Shelf Stocker"
         task.wait(400)
@@ -728,14 +744,24 @@ task.spawn(function()
         end
     end
 
+    local firstLoop = true
     while true do
+        local waitTime = math.random(360, 720)
+
         if #AvailableJobs == 0 then
             table.clear(StorageFram)
             AvailableJobs = {unpack(Jobs)}
             SaveProgress()
         end
-        local randomIndex = math.random(1, #AvailableJobs)
-        getgenv().Farmnow = table.remove(AvailableJobs, randomIndex)
+        -- รอบแรก: ถ้ามี Job ที่สุ่มใส่ config ไปแล้ว ดึงตัวนั้นออกจาก AvailableJobs ตรงๆ ไม่สุ่มซ้ำ
+        local preIndex = firstLoop and getgenv().Farmnow ~= "" and table.find(AvailableJobs, getgenv().Farmnow)
+        firstLoop = false
+        if preIndex then
+            getgenv().Farmnow = table.remove(AvailableJobs, preIndex)
+        else
+            local randomIndex = math.random(1, #AvailableJobs)
+            getgenv().Farmnow = table.remove(AvailableJobs, randomIndex)
+        end
         table.insert(StorageFram, getgenv().Farmnow)
         SaveProgress()
         pcall(function()
@@ -744,7 +770,7 @@ task.spawn(function()
 
         local xp_cook = DataCore.xp["cook"]
         local level_cook = xp_cook and xp_to_level(xp_cook) or 0
-        if level_cook < 30 then
+        if level_cook >= 30 then
             local index = table.find(Jobs, "Cook")
             if index then
                 table.remove(Jobs, index)
@@ -753,7 +779,7 @@ task.spawn(function()
 
         if getgenv().Farmnow == "Swiper" then
             pcall(function()
-                getgenv().HermanosFarm.Farming.IncludeFarming = false
+                getgenv().HermanosFarm.Farming.IncludeFarming = true
             end)
 
             Send("request_respawn")
@@ -774,7 +800,7 @@ task.spawn(function()
                 getgenv().HermanosFarm.Farming.HackToolsQuantity = hackToolCount
             end)
 
-            task.wait(300)
+            task.wait(waitTime)
             while CheckHackTool() do
                 task.wait(2)
             end
@@ -782,7 +808,7 @@ task.spawn(function()
             pcall(function()
                 getgenv().HermanosFarm.Farming.Job = getgenv().Farmnow
             end)
-            task.wait(300)
+            task.wait(waitTime)
         end
     end
 end)
