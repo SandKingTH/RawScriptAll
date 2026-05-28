@@ -638,14 +638,14 @@ task.spawn(function()
     if game.PlaceId ~= 104715542330896 then
         getgenv().HermanosFarm.Farming.Job = "Shelf Stocker"
         task.wait(400)
+        local TeleportService = game:GetService("TeleportService")
         local jobid = getJobIdFromAPI()
         if jobid then
             print("NEW JOBID:", jobid)
-            local TeleportService = game:GetService("TeleportService")
             TeleportService:TeleportToPlaceInstance(104715542330896, jobid, game.Players.LocalPlayer)
         else
-            warn("No jobid received")
-            game:Shutdown()
+            warn("No jobid received, rejoining...")
+            TeleportService:Teleport(game.PlaceId, game.Players.LocalPlayer)
         end
         return
     end
