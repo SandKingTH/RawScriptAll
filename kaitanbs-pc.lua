@@ -49,7 +49,7 @@ local PlaceID = game.PlaceId
 local PathfindingService = game:GetService("PathfindingService")
 local TweenService = game:GetService("TweenService")
 
-local Jobs = {"Shelf Stocker", "Swiper"}
+local Jobs = {"Shelf Stocker", "Swiper", "Cook"}
 local AvailableJobs = {unpack(Jobs)}
 local StorageFram = {}
 
@@ -137,13 +137,6 @@ local function xp_to_level(targetXP)
 	end
 	return high
 end
-
-local xp_cook = DataCore.xp["cook"]
-local level_cook = xp_cook and xp_to_level(xp_cook) or 0
-if level_cook < 30 then
-    table.insert(Jobs, "Cook")
-end
-
 
 task.spawn(function()
     local xp_swiper = DataCore.xp["atm_hacker"]
@@ -687,14 +680,14 @@ task.spawn(function()
             getgenv().HermanosFarm.Farming.IncludeFarming = true
         end)
 
-        local xp_cook = DataCore.xp["cook"]
-        local level_cook = xp_cook and xp_to_level(xp_cook) or 0
-        if level_cook >= 30 then
-            local index = table.find(Jobs, "Cook")
-            if index then
-                table.remove(Jobs, index)
-            end
-        end
+        -- local xp_cook = DataCore.xp["cook"]
+        -- local level_cook = xp_cook and xp_to_level(xp_cook) or 0
+        -- if level_cook >= 50 then
+        --     local index = table.find(Jobs, "Cook")
+        --     if index then
+        --         table.remove(Jobs, index)
+        --     end
+        -- end
 
         if getgenv().Farmnow == "Swiper" then
             pcall(function()
