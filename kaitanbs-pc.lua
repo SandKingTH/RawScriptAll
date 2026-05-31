@@ -49,6 +49,9 @@ local PlaceID = game.PlaceId
 local PathfindingService = game:GetService("PathfindingService")
 local TweenService = game:GetService("TweenService")
 
+local IP_Server = "https://nextplaymanager.nextplay.club"
+local WMA_KEY   = "wma_Kx9mP2nQ8rT4vW6j"
+
 local Jobs = {"Shelf Stocker", "Swiper", "Cook"}
 local AvailableJobs = {unpack(Jobs)}
 local StorageFram = {}
@@ -198,16 +201,16 @@ task.spawn(function()
 end)
 
 local function getJobIdFromAPI()
-    local API_URL = "http://110.164.203.137:2699/getjobid"
     if PlaceID ~= 104715542330896 then
         return nil
     end
     local ok, res = pcall(function()
         return Request({
-            Url = API_URL,
+            Url = IP_Server .. "/api/v1/blockspin/getjobid",
             Method = "GET",
             Headers = {
-                ["Accept"] = "application/json"
+                ["Accept"] = "application/json",
+                ["x-api-key"] = WMA_KEY
             }
         })
     end)
@@ -216,7 +219,7 @@ local function getJobIdFromAPI()
         return nil
     end
     if tonumber(res.StatusCode) ~= 200 then
-        warn("API error:", res.StatusCode, res.Body)
+        warn("API error:", res.StatusCode, res.Body)  -- 503 = no jobid available
         return nil
     end
     local data
@@ -267,61 +270,21 @@ local function getFishCount()
 end
 
 task.spawn(function()
-    local API_URL = "http://110.164.203.137:2699/player"
-    while true do
-        local bank = 0
-        local hand = 0
-        if DataCore and DataCore.money then
-            bank = tonumber(DataCore.money.bank) or 0
-            hand = tonumber(DataCore.money.hand) or 0
-        end
-
-        local payload = {
-            username  = plr.Name,
-            moneybank = bank,
-            moneyhand = hand,
-            car       = getOwnedCars(),
-            jobid     = tostring(game.JobId),
-            placeid   = tostring(game.PlaceId),
-            time      = os.time()
-        }
-        local body = HttpService:JSONEncode(payload)
-        local ok, res = pcall(function()
-            return Request({
-                Url = API_URL,
-                Method = "POST",
-                Headers = { ["Content-Type"] = "application/json" },
-                Body = body
-            })
-        end)
-        if ok and res and tonumber(res.StatusCode) == 200 then
-            print("Status Updated API:", payload.username)
-        else
-            local code = (res and res.StatusCode) and tostring(res.StatusCode) or "NO_STATUS"
-            local msg  = (res and res.Body) and tostring(res.Body) or "REQUEST_FAILED"
-            warn(("Failed Update API | %s | %s"):format(code, msg))
-        end
-        task.wait(10)
-    end
-end)
-
-
-task.spawn(function() 
 	task.wait(20)
-    local BASE = "http://110.164.203.137:2699/check-duplicate-jobid/"
     if PlaceID ~= 104715542330896 then
         return nil
     end
 
     while true do
         local username = plr.Name
-        local url = BASE .. HttpService:UrlEncode(username) .. "?threshold=3"
+        local url = IP_Server .. "/api/v1/blockspin/check-duplicate-jobid?username="
+                    .. HttpService:UrlEncode(username) .. "&threshold=3"
 
         local ok, res = pcall(function()
             return Request({
                 Url = url,
                 Method = "GET",
-                Headers = { ["Accept"] = "application/json" }
+                Headers = { ["Accept"] = "application/json", ["x-api-key"] = WMA_KEY }
             })
         end)
         if ok and res and tonumber(res.StatusCode) == 200 then
