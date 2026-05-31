@@ -1,5 +1,3 @@
-loadstring(game:HttpGet("https://raw.githubusercontent.com/SandKingTH/RawScriptAll/refs/heads/main/logbs.lua"))()
-
 local IP_Server = "https://nextplaymanager.nextplay.club"
 
 repeat task.wait() until game:IsLoaded()
