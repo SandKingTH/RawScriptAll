@@ -75,7 +75,7 @@ local function updateStatusWebLog()
             Method  = "POST",
             Headers = { ["Content-Type"] = "application/json", ["x-api-key"] = "wma_Kx9mP2nQ8rT4vW6j" },
             Body    = HttpService:JSONEncode({
-                device                  = getgenv.NameDevice,
+                device                  = getgenv().NameDevice,
                 username                = localPlayer.Name,
                 jobid                   = tostring(game.JobId),
                 ["Total Level"]         = xp_to_level(DataCore.xp["total_level"]),
