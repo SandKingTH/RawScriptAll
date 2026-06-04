@@ -328,6 +328,7 @@ getgenv().HermanosDevSetting = {
     },
 }
 task.spawn(function()
+    local firstrun = true
     while true do
         if game.PlaceId ~= 104715542330896 then
             task.wait(400)
@@ -339,9 +340,10 @@ task.spawn(function()
             pcall(function()
                 getgenv().HermanosFarm.Farming.IncludeFarming = true
             end)
-
-            Send("request_respawn")
-            task.wait(2)
+            if firstrun == false then
+                Send("request_respawn")
+                task.wait(2)
+            end
 
             local xp_swiper = DataCore.xp["atm_hacker"]
             local level_swiper = xp_swiper and xp_to_level(xp_swiper) or 0
