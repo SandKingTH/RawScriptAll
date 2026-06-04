@@ -372,6 +372,7 @@ task.spawn(function()
         pcall(function()
             getgenv().HermanosFarm.Farming.Job = jobnow
         end)
+        firstrun = false
     end
 end)
 
