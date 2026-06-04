@@ -351,6 +351,9 @@ task.spawn(function()
                 hackToolCount = 2
             else
                 hackToolCount = 5
+                pcall(function()
+                    getgenv().HermanosFarm.Farming.VehicleType = "Car"
+                end)
             end
             pcall(function()
                 getgenv().HermanosFarm.Farming.HackToolsQuantity = hackToolCount
