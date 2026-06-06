@@ -25,6 +25,7 @@ if isFirstRun then
     task.wait(3)
 end
 
+
 local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
 local DataCore = require(game:GetService("ReplicatedStorage").Modules.Core.Data)
@@ -280,7 +281,99 @@ task.spawn(function()
     end)
 end)
 
-getgenv().ATM_HACKER = true
-getgenv().FARMING = true
-getgenv().KEY = "264c6972-2815-47f1-a290-3eb3b7f66167"
-loadstring(game:HttpGet('https://api.luarmor.net/files/v4/loaders/ff744638668c00b2f2f8fdce4072716e.lua'))()
+getgenv().HermanosDevSetting = {
+    Farming = {
+        Job = randomjob(), -- Shelf Stocker, Cook, Janitor, Swiper, Fishing, Farming
+
+        -- Cook
+        Skillet = "Smart Select",
+        BuySkillet = false,
+
+        -- Janitor
+        PaddleMode = "Nearest", -- Smart, Nearest
+        Mop = "Smart Select",
+        BuyMop = false,
+
+        -- ATM Hacking
+        HackTools = "Smart Select",
+        HackToolsQuantity = 5,
+
+        -- Fishing
+        Rod = "Smart Select",
+        Bait = "Smart Select",
+        BaitQuantity = 10,
+        FishAmount = 10,
+
+        -- Farming
+        IncludeFarming = true,
+
+        -- Vehicle
+        VehicleType = "Bike", -- Bike, Car
+        VehicleSpeed = 52,
+
+        -- Auto Farm
+        AutoFarm = true,
+        AfkChecker = true,
+
+        -- Deposit
+        CashDeposit = 200,
+        AutoDeposit = true
+    },
+
+    General = {
+        HideName = true,
+        AntiRagdoll = true,
+        AntiKill = true,
+        AutoRespawn = true,
+    },
+}
+task.spawn(function()
+    local firstrun = true
+    while true do
+        if game.PlaceId ~= 104715542330896 then
+            task.wait(400)
+            TeleportService:Teleport(game.PlaceId, game.Players.LocalPlayer)
+        end
+
+        if getgenv().curjob == "Swiper" then
+
+            pcall(function()
+                getgenv().HermanosFarm.Farming.IncludeFarming = true
+            end)
+            if firstrun == false then
+                Send("request_respawn")
+                task.wait(2)
+            end
+
+            local xp_swiper = DataCore.xp["atm_hacker"]
+            local level_swiper = xp_swiper and xp_to_level(xp_swiper) or 0
+            local hackToolCount = 2
+
+            if level_swiper < 45 then
+                hackToolCount = 2
+            else
+                hackToolCount = 5
+                pcall(function()
+                    getgenv().HermanosFarm.Farming.VehicleType = "Car"
+                end)
+            end
+            pcall(function()
+                getgenv().HermanosFarm.Farming.HackToolsQuantity = hackToolCount
+            end)
+
+            task.wait(waitTime)
+            while CheckHackTool() do
+                task.wait(2)
+            end
+        end
+        local waitTime = math.random(360, 720)
+        task.wait(waitTime)
+        local jobnow = randomjob()
+        pcall(function()
+            getgenv().HermanosFarm.Farming.Job = jobnow
+        end)
+        firstrun = false
+    end
+end)
+
+loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/28d9e130cb0559d30e2c20b5c851b7ef.lua"))()
