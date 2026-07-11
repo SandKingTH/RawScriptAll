@@ -46,7 +46,7 @@ local TweenService = game:GetService("TweenService")
 local IP_Server = "https://nextplaymanager.nextplay.club"
 local WMA_KEY   = "wma_Kx9mP2nQ8rT4vW6j"
 
-getgenv().neebJobs = {"Shelf Stocker", "Cook", "Swiper"}
+getgenv().neebJobs = {"Shelf Stocker", "Cook", "Swiper", "Janitor"}
 getgenv().curjob = ""
 
 local FolderName = "NextPlayBS"
