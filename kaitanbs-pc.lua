@@ -353,18 +353,18 @@ task.spawn(function()
                 hackToolCount = 2
             else
                 hackToolCount = 5
-                pcall(function()
-                    getgenv().HermanosFarm.Farming.VehicleType = "Car"
-                end)
+                -- pcall(function()
+                --     getgenv().HermanosFarm.Farming.VehicleType = "Car"
+                -- end)
             end
             pcall(function()
                 getgenv().HermanosFarm.Farming.HackToolsQuantity = hackToolCount
             end)
 
-            task.wait(waitTime)
-            while CheckHackTool() do
-                task.wait(2)
-            end
+            -- task.wait(waitTime)
+            -- while CheckHackTool() do
+            --     task.wait(2)
+            -- end
         end
         local waitTime = math.random(360, 720)
         task.wait(waitTime)
