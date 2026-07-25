@@ -46,7 +46,7 @@ local TweenService = game:GetService("TweenService")
 local IP_Server = "https://nextplaymanager.nextplay.club"
 local WMA_KEY   = "wma_Kx9mP2nQ8rT4vW6j"
 
-getgenv().neebJobs = {"Shelf Stocker", "Cook", "Swiper", "Janitor"}
+getgenv().neebJobs = {"Shelf Stocker", "Cook", "Janitor", "Swiper"}
 getgenv().curjob = ""
 
 local FolderName = "NextPlayBS"
@@ -281,6 +281,13 @@ task.spawn(function()
     end)
 end)
 
+local function hopgame()
+    local jobid = getJobIdFromAPI()
+    local TeleportService = game:GetService("TeleportService")
+    TeleportService:TeleportToPlaceInstance(PlaceID, jobid, game.Players.LocalPlayer)
+end
+
+
 getgenv().HermanosDevSetting = {
     Farming = {
         Job = randomjob(), -- Shelf Stocker, Cook, Janitor, Swiper, Fishing, Farming
@@ -329,6 +336,7 @@ getgenv().HermanosDevSetting = {
 }
 task.spawn(function()
     local firstrun = true
+    countfram = 0
     while true do
         if game.PlaceId ~= 104715542330896 then
             task.wait(400)
@@ -368,6 +376,10 @@ task.spawn(function()
         end
         local waitTime = math.random(360, 720)
         task.wait(waitTime)
+        countfram = countfram + 1
+        if countfram == 4 then
+            hopgame()
+        end
         local jobnow = randomjob()
         pcall(function()
             getgenv().HermanosFarm.Farming.Job = jobnow
