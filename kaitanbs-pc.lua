@@ -377,7 +377,7 @@ task.spawn(function()
         local waitTime = math.random(360, 720)
         task.wait(waitTime)
         countfram = countfram + 1
-        if countfram == 4 then
+        if countfram == 5 then
             hopgame()
         end
         local jobnow = randomjob()
