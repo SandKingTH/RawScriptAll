@@ -496,4 +496,5 @@ elseif SwordCDK == false then
 elseif SwordCDK then
     print("Maru")
     RunScript("banana")
+	
 end
