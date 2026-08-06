@@ -46,7 +46,7 @@ local TweenService = game:GetService("TweenService")
 local IP_Server = "https://nextplaymanager.nextplay.club"
 local WMA_KEY   = "wma_Kx9mP2nQ8rT4vW6j"
 
-getgenv().neebJobs = {"Shelf Stocker", "Cook", "Swiper"}
+getgenv().neebJobs = {"Shelf Stocker", "Cook", "Janitor", "Swiper"}
 getgenv().curjob = ""
 
 local FolderName = "NextPlayBS"
@@ -281,16 +281,11 @@ task.spawn(function()
     end)
 end)
 
-local function hopgame()
-    local jobid = getJobIdFromAPI()
-    local TeleportService = game:GetService("TeleportService")
-    TeleportService:TeleportToPlaceInstance(PlaceID, jobid, game.Players.LocalPlayer)
-end
 
 
 getgenv().HermanosDevSetting = {
     Farming = {
-        Job = randomjob(), -- Shelf Stocker, Cook, Janitor, Swiper, Fishing, Farming
+        Job = "Swiper", -- Shelf Stocker, Cook, Janitor, Swiper, Fishing, Farming
 
         -- Cook
         Skillet = "Smart Select",
@@ -315,7 +310,7 @@ getgenv().HermanosDevSetting = {
         IncludeFarming = true,
 
         -- Vehicle
-        VehicleType = "Bike", -- Bike, Car
+        VehicleType = "Car", -- Bike, Car
         VehicleSpeed = 52,
 
         -- Auto Farm
@@ -334,58 +329,4 @@ getgenv().HermanosDevSetting = {
         AutoRespawn = true,
     },
 }
-task.spawn(function()
-    local firstrun = true
-    countfram = 0
-    while true do
-        if game.PlaceId ~= 104715542330896 then
-            task.wait(400)
-            TeleportService:Teleport(game.PlaceId, game.Players.LocalPlayer)
-        end
-
-        if getgenv().curjob == "Swiper" then
-
-            pcall(function()
-                getgenv().HermanosFarm.Farming.IncludeFarming = true
-            end)
-            if firstrun == false then
-                Send("request_respawn")
-                task.wait(2)
-            end
-
-            local xp_swiper = DataCore.xp["atm_hacker"]
-            local level_swiper = xp_swiper and xp_to_level(xp_swiper) or 0
-            local hackToolCount = 2
-
-            if level_swiper < 45 then
-                hackToolCount = 2
-            else
-                hackToolCount = 5
-                -- pcall(function()
-                --     getgenv().HermanosFarm.Farming.VehicleType = "Car"
-                -- end)
-            end
-            pcall(function()
-                getgenv().HermanosFarm.Farming.HackToolsQuantity = hackToolCount
-            end)
-
-            -- task.wait(waitTime)
-            -- while CheckHackTool() do
-            --     task.wait(2)
-            -- end
-        end
-        local waitTime = math.random(360, 720)
-        task.wait(waitTime)
-        countfram = countfram + 1
-        -- if countfram == 5 then
-        --    hopgame()
-        -- end
-        local jobnow = randomjob()
-        pcall(function()
-            getgenv().HermanosFarm.Farming.Job = jobnow
-        end)
-        firstrun = false
-    end
-end)
-
 loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/28d9e130cb0559d30e2c20b5c851b7ef.lua"))()
