@@ -307,7 +307,7 @@ getgenv().HermanosDevSetting = {
         FishAmount = 10,
 
         -- Farming
-        IncludeFarming = true,
+        IncludeFarming = false,
 
         -- Vehicle
         VehicleType = "Car", -- Bike, Car
