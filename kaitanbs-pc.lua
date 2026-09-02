@@ -285,7 +285,7 @@ end)
 
 getgenv().HermanosDevSetting = {
     Farming = {
-        Job = "Swiper", -- Shelf Stocker, Cook, Janitor, Swiper, Fishing, Farming
+        Job = "Fishing", -- Shelf Stocker, Cook, Janitor, Swiper, Fishing, Farming
 
         -- Cook
         Skillet = "Smart Select",
@@ -310,7 +310,7 @@ getgenv().HermanosDevSetting = {
         IncludeFarming = false,
 
         -- Vehicle
-        VehicleType = "Car", -- Bike, Car
+        VehicleType = "Bike", -- Bike, Car
         VehicleSpeed = 52,
 
         -- Auto Farm
