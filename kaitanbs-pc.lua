@@ -285,7 +285,7 @@ end)
 
 getgenv().HermanosDevSetting = {
     Farming = {
-        Job = "Swiper", -- Shelf Stocker, Cook, Janitor, Swiper, Fishing, Farming
+        Job = "Fishing", -- Shelf Stocker, Cook, Janitor, Swiper, Fishing, Farming
 
         -- Cook
         Skillet = "Smart Select",
