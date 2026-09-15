@@ -182,6 +182,49 @@ local function getJobIdFromAPI()
 end
 
 task.spawn(function()
+	task.wait(40)
+    if PlaceID ~= 104715542330896 then
+        return nil
+    end
+
+    while true do
+        local username = plr.Name
+        local url = IP_Server .. "/api/v1/blockspin/check-duplicate-jobid?username="
+                    .. HttpService:UrlEncode(username) .. "&threshold=3"
+
+        local ok, res = pcall(function()
+            return Request({
+                Url = url,
+                Method = "GET",
+                Headers = { ["Accept"] = "application/json", ["x-api-key"] = WMA_KEY }
+            })
+        end)
+        if ok and res and tonumber(res.StatusCode) == 200 then
+            local body = res.Body or "{}"
+            local data = {}
+            pcall(function()
+                data = HttpService:JSONDecode(body)
+            end)
+
+            print(("check_duplicate_jobid OK | %s | count=%s | need_new=%s"):format(
+                username,
+                tostring(data.count),
+                tostring(data.need_new_jobid)
+            ))
+            if data.need_new_jobid and data.new_jobid then
+                print("NEW JOBID:", data.new_jobid)
+                game:GetService("TeleportService"):TeleportToPlaceInstance(PlaceID, data.new_jobid, game.Players.LocalPlayer)
+            end
+        else
+            local code = (res and res.StatusCode) and tostring(res.StatusCode) or "NO_STATUS"
+            local msg  = (res and res.Body) and tostring(res.Body) or "REQUEST_FAILED"
+            warn(("Failed check_duplicate_jobid | %s | %s"):format(code, msg))
+        end
+        task.wait(10)
+    end
+end)
+
+task.spawn(function()
     while true do 
         setfpscap(10)
         task.wait(2)
@@ -191,53 +234,32 @@ end)
 task.spawn(function()
     print("Start")
     local DataCore = require(game:GetService("ReplicatedStorage").Modules.Core.Data)
-
-    local kickThreshold = 5 * 60
-    local POS_TOLERANCE = 3 -- studs
-
-    local function getTotalMoney()
-        local money = DataCore.money or {}
-        return (tonumber(money.hand) or 0) + (tonumber(money.bank) or 0)
-    end
-
-    local function getRootPosition()
-        local char = plr.Character
-        local root = char and char:FindFirstChild("HumanoidRootPart")
-        return root and root.Position or nil
-    end
-
-    local lastMoney = getTotalMoney()
-    local lastPos = getRootPosition()
+    local lastMoney = DataCore.money.hand
     local lastChangeTime = os.time()
-
+    local kickThreshold = 5 * 60
     while true do
         task.wait(1)
-        local currentMoney = getTotalMoney()
-        local currentPos = getRootPosition()
-
-        local moneyChanged = currentMoney ~= lastMoney
-        local moved = (lastPos == nil) or (currentPos == nil)
-            or ((currentPos - lastPos).Magnitude > POS_TOLERANCE)
-
-        if moneyChanged or moved then
+        local currentMoney = DataCore.money.hand
+        if currentMoney ~= lastMoney then
             lastMoney = currentMoney
-            lastPos = currentPos
             lastChangeTime = os.time()
-        elseif os.time() - lastChangeTime >= kickThreshold then
-            -- player stayed in the same spot and hand + bank money never changed
-            local player = Players.LocalPlayer
-            if player then
-                local jobid = getJobIdFromAPI()
-                if jobid then
-                    print("NEW JOBID:", jobid)
-                    local TeleportService = game:GetService("TeleportService")
-                    TeleportService:TeleportToPlaceInstance(PlaceID, jobid, game.Players.LocalPlayer)
-                else
-                    warn("No jobid received")
-                    game:Shutdown()
+        else
+            if os.time() - lastChangeTime >= kickThreshold then
+                local Players = game:GetService("Players")
+                local player = Players.LocalPlayer or Players:GetPlayerFromCharacter(script.Parent)
+                if player then
+                    local jobid = getJobIdFromAPI()
+                    if jobid then
+                        print("NEW JOBID:", jobid)
+                        local TeleportService = game:GetService("TeleportService")
+                        TeleportService:TeleportToPlaceInstance(PlaceID, jobid, game.Players.LocalPlayer)
+                    else
+                        warn("No jobid received")
+                        game:Shutdown()
+                    end
                 end
+                break
             end
-            break
         end
     end
 end)
@@ -261,50 +283,158 @@ end)
 
 
 
-getgenv().HermanosDevSetting = {
-    Farming = {
-        Job = "Shelf Stocker", -- Shelf Stocker, Cook, Janitor, Swiper, Fishing, Farming
-
-        -- Cook
-        Skillet = "Smart Select",
-        BuySkillet = false,
-
-        -- Janitor
-        PaddleMode = "Nearest", -- Smart, Nearest
-        Mop = "Smart Select",
-        BuyMop = false,
-
-        -- ATM Hacking
-        HackTools = "Smart Select",
-        HackToolsQuantity = 5,
-
-        -- Fishing
-        Rod = "Smart Select",
-        Bait = "Smart Select",
-        BaitQuantity = 10,
-        FishAmount = 10,
-
-        -- Farming
-        IncludeFarming = false,
-
-        -- Vehicle
-        VehicleType = "Bike", -- Bike, Car
-        VehicleSpeed = 52,
-
-        -- Auto Farm
-        AutoFarm = true,
-        AfkChecker = true,
-
-        -- Deposit
-        CashDeposit = 200,
-        AutoDeposit = true
-    },
-
-    General = {
-        HideName = true,
-        AntiRagdoll = true,
-        AntiKill = false,
-        AutoRespawn = true,
-    },
+getgenv().Configs = {
+	ATMHacker = {
+		Bank = {
+			Enabled = true,
+			Threshold = 2000
+		},
+		RepairBelow = 60,
+		Underground = "Off"
+	},
+	AntiFinish = true,
+	Appearance = {
+		Blur = true,
+		Draggable = true,
+		Dropshadow = true,
+		MinimizeKeybind = "RightControl",
+		Resizable = true,
+		Searching = true,
+		Theme = "Obsidian"
+	},
+	Cook = {
+		Bank = {
+			Enabled = true,
+			Threshold = 2000
+		},
+		Skillet = {
+			Enabled = true,
+			Pick = "Smart"
+		}
+	},
+	Defense = "Aura",
+	Enabled = true,
+	Fishing = {
+		Area = "Smart",
+		Bank = {
+			Enabled = true,
+			Threshold = 2000
+		},
+		Equipment = {
+			Bait = "Smart",
+			BaitPerTrip = "Smart",
+			Rod = "Smart"
+		},
+		Filter = {
+			Enabled = false,
+			Method = "skip",
+			MinRarity = "Common"
+		},
+		Mode = "Normal",
+		RepairBelow = 60,
+		Sell = {
+			Condition = "Any",
+			Enabled = true
+		},
+		Underground = "Semi Underground",
+		Webhook = {
+			Enabled = false,
+			Rarities = {
+				Legendary = true,
+				Omega = true
+			},
+			Url = ""
+		}
+	},
+	Health = {
+		AutoRejoin = {
+			Enabled = false,
+			RejoinMethod = "teleport",
+			Unit = "h",
+			Value = 3
+		}
+	},
+	Janitor = {
+		Bank = {
+			Enabled = true,
+			Threshold = 2000
+		},
+		Mop = {
+			Enabled = true,
+			Pick = "Smart"
+		}
+	},
+	Job = "atm_hacker",
+	Marketplace = {
+		AtmAmount = 0,
+		SpinSkips = false
+	},
+	Planting = {
+		Enabled = false,
+		Seed = "SunflowerSeeds",
+		WaterThreshold = 60
+	},
+	RespawnOnDeath = true,
+	Rotation = {
+		Enabled = false,
+		Jobs = {
+			{
+				Job = "steakhouse_cook",
+				Minutes = 10
+			},
+			{
+				Job = "janitor",
+				Minutes = 0
+			},
+			{
+				Job = "shelf_stocker",
+				Minutes = 15
+			},
+			{
+				Job = "fishing",
+				Minutes = 30
+			},
+			{
+				Job = "atm_hacker",
+				Minutes = 30
+			}
+		}
+	},
+	Settings = {
+		BlackScreen = false,
+		FramerateCap = false,
+		FramerateLimit = 60,
+		Performance = false
+	},
+	StaminaFarm = true,
+	Stocker = {
+		Bank = {
+			Enabled = true,
+			Threshold = 2000
+		}
+	},
+	Storm = {
+		Finisher = {
+			BankTarget = 1000000,
+			Enabled = false,
+			Job = "fishing",
+			Level = 70,
+			RequireLevel = false
+		}
+	},
+	StreamerMode = {
+		Enabled = false
+	},
+	Underground = {
+		Depth = 12,
+		Mode = "Normal"
+	},
+	Vehicle = {
+		Enabled = true,
+		Type = "Car"
+	}
 }
-loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/28d9e130cb0559d30e2c20b5c851b7ef.lua"))()
+
+script_key = "VuwYxqNoAMziszybuJoOuuFcRXWDHWWS";
+loadstring(game:HttpGet("https://api.luarmor.net/files/v4/loaders/d801c6e7f8fcfa7c0678ee2b8e6e88a1.lua"))()
+
