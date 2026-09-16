@@ -181,6 +181,19 @@ local function getJobIdFromAPI()
     return data.jobid
 end
 
+local function teleportToNewJob()
+    while true do
+        local jobid = getJobIdFromAPI()
+        if jobid then
+            print("NEW JOBID:", jobid)
+            TeleportService:TeleportToPlaceInstance(PlaceID, jobid, Players.LocalPlayer)
+            return true
+        end
+        warn("No jobid received, retrying in 10s...")
+        task.wait(10)
+    end
+end
+
 task.spawn(function()
     while true do 
         setfpscap(10)
@@ -227,15 +240,7 @@ task.spawn(function()
             -- player stayed in the same spot and hand + bank money never changed
             local player = Players.LocalPlayer
             if player then
-                local jobid = getJobIdFromAPI()
-                if jobid then
-                    print("NEW JOBID:", jobid)
-                    local TeleportService = game:GetService("TeleportService")
-                    TeleportService:TeleportToPlaceInstance(PlaceID, jobid, game.Players.LocalPlayer)
-                else
-                    warn("No jobid received")
-                    game:Shutdown()
-                end
+                teleportToNewJob()
             end
             break
         end
@@ -246,15 +251,7 @@ task.spawn(function()
     local LIMIT_SECONDS = 90 * 60
     task.delay(LIMIT_SECONDS, function()
         if localPlayer and localPlayer.Parent then
-            local jobid = getJobIdFromAPI()
-            if jobid then
-                print("NEW JOBID:", jobid)
-                local TeleportService = game:GetService("TeleportService")
-                TeleportService:TeleportToPlaceInstance(PlaceID, jobid, game.Players.LocalPlayer)
-            else
-                warn("No jobid received")
-                game:Shutdown()
-            end
+            teleportToNewJob()
         end
     end)
 end)
