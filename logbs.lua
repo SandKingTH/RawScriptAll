@@ -121,6 +121,47 @@ game.StarterGui:SetCore("SendNotification", {
     Icon     = "rbxassetid://123023221387595",
 })
 
+local CountTimeFolder   = "counttimeaccountnextplay"
+local CountTimeFile     = CountTimeFolder .. "/counttime_" .. localPlayer.Name .. ".json"
+local CountTimeInterval = 15
+
+local function ensureCountTimeFile()
+    if not isfolder(CountTimeFolder) then
+        makefolder(CountTimeFolder)
+    end
+    if not isfile(CountTimeFile) then
+        writefile(CountTimeFile, HttpService:JSONEncode({ time = 0 }))
+    end
+end
+
+local function readCountTime()
+    ensureCountTimeFile()
+    local ok, data = pcall(function()
+        return HttpService:JSONDecode(readfile(CountTimeFile))
+    end)
+    if ok and type(data) == "table" and tonumber(data.time) then
+        return tonumber(data.time)
+    end
+    return 0
+end
+
+if not getgenv().CountTimeAccountRunning then
+    getgenv().CountTimeAccountRunning = true
+    task.spawn(function()
+        pcall(ensureCountTimeFile)
+        while task.wait(CountTimeInterval) do
+            if globalFunc then continue end
+            local ok, err = pcall(function()
+                local t = readCountTime() + CountTimeInterval
+                writefile(CountTimeFile, HttpService:JSONEncode({ time = t }))
+            end)
+            if not ok then
+                warn("[counttime] " .. tostring(err))
+            end
+        end
+    end)
+end
+
 local Round = 0
 while true do
     print("Disconnected : ", globalFunc)
